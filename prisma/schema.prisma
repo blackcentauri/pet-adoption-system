@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
@@ -12,4 +6,51 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model adopted_pets {
+  id               Int           @id @default(autoincrement())
+  user_id          Int
+  pet_id           Int
+  organization_id  Int
+  date_of_adoption DateTime?     @db.Timestamp(6)
+  organizations    organizations @relation(fields: [organization_id], references: [organization_id], onDelete: NoAction, onUpdate: NoAction)
+  pets             pets          @relation(fields: [pet_id], references: [pet_id], onDelete: NoAction, onUpdate: NoAction)
+  users            users         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model organizations {
+  organization_id       Int            @id(map: "organization_pkey") @default(autoincrement())
+  organization_name     String?        @db.VarChar(255)
+  organization_username String?        @db.VarChar(255)
+  organization_email    String?        @db.VarChar(255)
+  organization_password String?        @db.VarChar(255)
+  adopted_pets          adopted_pets[]
+}
+
+model pets {
+  pet_id          Int            @id @default(autoincrement())
+  pet_name        String?        @db.VarChar(255)
+  pet_age         String?        @db.VarChar(255)
+  pet_species     String?        @db.VarChar(255)
+  pet_status      pet_status?
+  pet_description String?        @db.VarChar(255)
+  pet_image       String?        @db.VarChar(255)
+  adopted_pets    adopted_pets[]
+}
+
+model users {
+  user_id      Int            @id @default(autoincrement())
+  first_name   String?        @db.VarChar(255)
+  last_name    String?        @db.VarChar(255)
+  username     String?        @db.VarChar(255)
+  email        String?        @db.VarChar(255)
+  password     String?        @db.VarChar(255)
+  adopted_pets adopted_pets[]
+}
+
+enum pet_status {
+  not_adopted @map("not adopted")
+  pending
+  adopted
 }
