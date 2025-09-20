@@ -21,10 +21,10 @@ model adopted_pets {
 
 model organizations {
   organization_id       Int            @id(map: "organization_pkey") @default(autoincrement())
-  organization_name     String?        @db.VarChar(255)
-  organization_username String?        @db.VarChar(255)
-  organization_email    String?        @db.VarChar(255)
-  organization_password String?        @db.VarChar(255)
+  organization_name     String         @db.VarChar(255)
+  organization_username String         @unique(map: "unique_organization_username") @db.VarChar(255)
+  organization_email    String         @unique(map: "unique_organization_email") @db.VarChar(255)
+  organization_password String         @db.VarChar(255)
   adopted_pets          adopted_pets[]
 }
 
@@ -43,9 +43,9 @@ model users {
   user_id      Int            @id @default(autoincrement())
   first_name   String?        @db.VarChar(255)
   last_name    String?        @db.VarChar(255)
-  username     String?        @db.VarChar(255)
-  email        String?        @db.VarChar(255)
-  password     String?        @db.VarChar(255)
+  username     String         @unique(map: "unique_username") @db.VarChar(255)
+  email        String         @unique(map: "email") @db.VarChar(255)
+  password     String         @db.VarChar(255)
   adopted_pets adopted_pets[]
 }
 
