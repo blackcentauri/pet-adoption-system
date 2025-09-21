@@ -7,6 +7,7 @@ import { cache } from 'react';
 interface JWTPayload {
   userId: number;
   username: string;
+  role: string;
   [key: string]: string | number | boolean | null | undefined;
 }
 
@@ -23,7 +24,7 @@ async function generateJWT(payload: JWTPayload) {
 }
 
 // Verify jwt token
-async function verifyJWTToken(token: string): Promise<JWTPayload | null> {
+export async function verifyJWTToken(token: string): Promise<JWTPayload | null> {
   try {
     const { payload } = await jose.jwtVerify(token, JWT_SECRET);
 
@@ -35,9 +36,13 @@ async function verifyJWTToken(token: string): Promise<JWTPayload | null> {
 }
 
 // Creating session
-export async function createSession(userId: number, username: string) {
+export async function createSession(
+  userId: number,
+  username: string,
+  role: string
+) {
   try {
-    const token = await generateJWT({ userId, username });
+    const token = await generateJWT({ userId, username, role });
     if (!token) {
       return false;
     }
