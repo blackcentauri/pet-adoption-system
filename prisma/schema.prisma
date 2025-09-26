@@ -9,48 +9,43 @@ datasource db {
 }
 
 model adopted_pets {
-  id               Int           @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   user_id          Int
   pet_id           Int
-  organization_id  Int
-  date_of_adoption DateTime?     @db.Timestamp(6)
-  organizations    organizations @relation(fields: [organization_id], references: [organization_id], onDelete: NoAction, onUpdate: NoAction)
-  pets             pets          @relation(fields: [pet_id], references: [pet_id], onDelete: NoAction, onUpdate: NoAction)
-  users            users         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model organizations {
-  organization_id       Int            @id(map: "organization_pkey") @default(autoincrement())
-  organization_name     String         @db.VarChar(255)
-  organization_username String         @unique(map: "unique_organization_username") @db.VarChar(255)
-  organization_email    String         @unique(map: "unique_organization_email") @db.VarChar(255)
-  organization_password String         @db.VarChar(255)
-  adopted_pets          adopted_pets[]
+  date_of_adoption DateTime? @db.Timestamp(6)
+  users            users     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_fk")
 }
 
 model pets {
-  pet_id          Int            @id @default(autoincrement())
-  pet_name        String?        @db.VarChar(255)
-  pet_age         String?        @db.VarChar(255)
-  pet_species     String?        @db.VarChar(255)
+  pet_id          Int         @id @default(autoincrement())
+  pet_name        String?     @db.VarChar(255)
+  pet_age         String?     @db.VarChar(255)
+  pet_species     String?     @db.VarChar(255)
   pet_status      pet_status?
-  pet_description String?        @db.VarChar(255)
-  pet_image       String?        @db.VarChar(255)
-  adopted_pets    adopted_pets[]
+  pet_description String?     @db.VarChar(255)
+  pet_image       String?     @db.VarChar(255)
 }
 
 model users {
-  user_id      Int            @id @default(autoincrement())
-  first_name   String?        @db.VarChar(255)
-  last_name    String?        @db.VarChar(255)
-  username     String         @unique(map: "unique_username") @db.VarChar(255)
-  email        String         @unique(map: "email") @db.VarChar(255)
-  password     String         @db.VarChar(255)
-  adopted_pets adopted_pets[]
+  user_id           Int            @id @default(autoincrement())
+  first_name        String?        @db.VarChar(255)
+  last_name         String?        @db.VarChar(255)
+  username          String         @unique(map: "unique_username") @db.VarChar(255)
+  email             String         @unique(map: "email") @db.VarChar(255)
+  password          String         @db.VarChar(255)
+  role              user_role?     @default(user)
+  organization_name String?        @db.VarChar(255)
+  created_at        DateTime?      @db.Timestamp(6)
+  adopted_pets      adopted_pets[]
 }
 
 enum pet_status {
   not_adopted @map("not adopted")
   pending
   adopted
+}
+
+enum user_role {
+  user
+  admin
 }
