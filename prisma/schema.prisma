@@ -24,6 +24,8 @@ model pets {
   pet_status      pet_status?
   pet_description String?     @db.VarChar(255)
   pet_image       String?     @db.VarChar(255)
+  user_id         Int
+  users           users       @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_id")
 }
 
 model users {
@@ -37,6 +39,7 @@ model users {
   organization_name String?        @db.VarChar(255)
   created_at        DateTime?      @db.Timestamp(6)
   adopted_pets      adopted_pets[]
+  pets              pets[]
 }
 
 enum pet_status {
