@@ -57,6 +57,8 @@ export async function createSession(
       path: '/',
       sameSite: 'lax',
     });
+
+    return true;
   } catch (error) {
     console.error('Error creating session', error);
     return false;
