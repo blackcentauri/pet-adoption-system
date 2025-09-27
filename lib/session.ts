@@ -1,5 +1,4 @@
 import 'server-only';
-import 'dotenv/config';
 import { cookies } from 'next/headers';
 import * as jose from 'jose';
 import { cache } from 'react';
@@ -24,7 +23,9 @@ async function generateJWT(payload: JWTPayload) {
 }
 
 // Verify jwt token
-export async function verifyJWTToken(token: string): Promise<JWTPayload | null> {
+export async function verifyJWTToken(
+  token: string
+): Promise<JWTPayload | null> {
   try {
     const { payload } = await jose.jwtVerify(token, JWT_SECRET);
 
@@ -57,8 +58,6 @@ export async function createSession(
       path: '/',
       sameSite: 'lax',
     });
-
-    return true;
   } catch (error) {
     console.error('Error creating session', error);
     return false;
@@ -90,7 +89,11 @@ export const getSession = cache(async () => {
     const sessionPayload = await verifyJWTToken(token);
 
     return sessionPayload
-      ? { userId: sessionPayload.userId, username: sessionPayload.username }
+      ? {
+          userId: sessionPayload.userId,
+          username: sessionPayload.username,
+          role: sessionPayload.role,
+        }
       : null;
   } catch (error) {
     console.error('Error fetching session', error);
