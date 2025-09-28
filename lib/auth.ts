@@ -27,17 +27,20 @@ export const UserSignUpSchema = z
         path: ['confirmPassword'],
     });
 
-export const AdminSignUpSchema = z.object({
-    organizationName: z.string().min(1, 'Organization name is required'),
-    organizationUsername: z
-        .string()
-        .min(1, 'Organization username is required'),
-    email: z
-        .string()
-        .min(1, 'Email is required')
-        .check(z.email('Invalid email address')),
-    password: z.string().min(8, 'Password should be at least 8 characters'),
-});
+export const AdminSignUpSchema = z
+    .object({
+        organizationName: z.string().min(1, 'Organization name is required'),
+        username: z.string().min(1, 'Organization username is required'),
+        email: z
+            .string()
+            .min(1, 'Email is required')
+            .email('Invalid email address'),
+        password: z.string().min(8, 'Password should be at least 8 characters'),
+        confirmPassword: z.string().min(1, 'Please confirm your password'),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: 'Password do not match',
+    });
 
 export type SignInValidation = z.infer<typeof SignInSchema>;
 export type UserSignUpValidation = z.infer<typeof UserSignUpSchema>;

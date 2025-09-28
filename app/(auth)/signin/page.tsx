@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Loader2Icon } from 'lucide-react';
 
 const initialState: ActionResponse = {
     success: false,
@@ -25,7 +26,24 @@ export default function SignInPage() {
             const result = await signIn(formData);
 
             if (result.success) {
-                router.push('/dashboard/user');
+                const response = await fetch('/api/session');
+
+                if (!response.ok) {
+                    return {
+                        success: false,
+                        message: 'No session found',
+                    };
+                }
+
+                const data = await response
+                    .json()
+                    .then((session) => session.data);
+
+                if (data === 'admin') {
+                    router.push('/dashboard/admin');
+                } else {
+                    router.push('/dashboard/user');
+                }
             }
 
             return result;
@@ -83,23 +101,40 @@ export default function SignInPage() {
                         required
                     />
                 </FormGroup>
-                <FormGroup className="flex flex-col gap-2 items-center">
+                <FormGroup className="flex flex-col gap-3 items-center">
                     <Button
                         disabled={isPending}
                         className="w-full font-poppins font-medium text-md py-5"
                     >
-                        Log in
+                        {isPending ? (
+                            <Loader2Icon className="animate-spin" />
+                        ) : (
+                            <>Log in</>
+                        )}
                     </Button>
                     <div>
-                        <p>
+                        <p className="text-[0.9rem]">
                             Don&apos;t have an account?{' '}
                             <Link
                                 href={'/user/signup'}
-                                className="text-primary"
+                                className="text-primary font-medium"
                             >
                                 Sign up
                             </Link>{' '}
                             instead
+                        </p>
+                    </div>
+                    <div>or</div>
+                    <div>
+                        <p className="text-[0.9rem]">
+                            Are you an organization?{' '}
+                            <Link
+                                href={'/organization/signup'}
+                                className="text-primary font-medium"
+                            >
+                                Sign up
+                            </Link>{' '}
+                            here
                         </p>
                     </div>
                 </FormGroup>
