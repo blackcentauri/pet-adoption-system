@@ -10,6 +10,7 @@ import {
     insertUser,
     verifyPassword,
 } from '@/model/user';
+import { hash } from 'bcryptjs';
 import { createSession } from '@/lib/session';
 
 export async function signIn(formData: FormData): Promise<ActionResponse> {

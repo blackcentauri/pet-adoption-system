@@ -1,6 +1,6 @@
 import { PrismaClient, users } from '@/app/generated/prisma';
 import { ModelResponse } from './response';
-import { compare } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
 import { encryptPassword } from '@/util/encrypt-password';
 
 const prisma = new PrismaClient();
@@ -193,15 +193,16 @@ export async function insertOrganization({
     password,
 }: OrganizationProps): Promise<ModelResponse<users>> {
     try {
+        const hashedPassword = await encryptPassword(password);
         const createdAt = new Date();
-        const ORGANIZATION_ROLE = 'admin';
+        const USER_ROLE = 'admin';
         const organization = await prisma.users.create({
             data: {
                 organization_name: organizationName,
                 username: username,
                 email: email,
-                password: password,
-                role: ORGANIZATION_ROLE,
+                password: hashedPassword,
+                role: USER_ROLE,
                 created_at: createdAt,
             },
         });
