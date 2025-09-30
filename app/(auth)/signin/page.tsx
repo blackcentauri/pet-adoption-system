@@ -2,7 +2,7 @@
 import { signIn } from '@/server/auth';
 import { ActionResponse } from '@/server/response';
 import { useActionState } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { Form, FormError, FormGroup, FormLabel } from '@/components/Form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,9 @@ export default function SignInPage() {
             const result = await signIn(formData);
 
             if (result.success) {
-                const response = await fetch('/api/session');
+                const response = await fetch('/api/session', {
+                    method: 'POST',
+                });
 
                 if (!response.ok) {
                     return {
@@ -35,13 +37,17 @@ export default function SignInPage() {
                     };
                 }
 
-                const data = await response
-                    .json()
-                    .then((session) => session.data);
+                const data = await response.json();
 
-                if (data === 'admin') {
+                if (data.data === null) {
+                    redirect('/signin');
+                }
+
+                if (data.data.role === 'admin') {
                     router.push('/dashboard/admin');
-                } else {
+                }
+
+                if (data.data.role === 'user') {
                     router.push('/dashboard/user');
                 }
             }
