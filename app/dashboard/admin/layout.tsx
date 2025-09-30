@@ -9,10 +9,8 @@ export default function AdminDashboardLayout({
     return (
         <SidebarProvider>
             <LeftSidebar />
-            <main className="h-full w-full">
-                <SidebarTrigger />
-                {children}
-            </main>
+            <SidebarTrigger />
+            <main className="h-full w-full px-4 py-5">{children}</main>
         </SidebarProvider>
     );
 }
