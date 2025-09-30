@@ -7,7 +7,7 @@ export async function POST() {
 
         if (!session || session.role === null) {
             return NextResponse.json(
-                { success: false, message: 'No session found!' },
+                { success: false, message: 'No session found!', data: null },
                 { status: 404 }
             );
         }
@@ -22,6 +22,7 @@ export async function POST() {
             {
                 success: false,
                 message: 'An error occured while fetching data',
+                data: null,
             },
             { status: 500 }
         );
