@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/session';
 
-export default async function DashboardLayout({
+export default async function UserDashboardLayout({
     children,
 }: {
     children: React.ReactNode;
