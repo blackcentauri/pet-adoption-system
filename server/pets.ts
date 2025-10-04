@@ -1,10 +1,10 @@
 'use server';
-import { getAllFosterPets } from '@/model/pet';
+import { getAllAvailablePets, getAllFosterPets } from '@/model/pet';
 import { ActionResponse } from './response';
 import { getSession } from '@/lib/session';
 import { pets } from '@/app/generated/prisma';
 
-export async function getPets(): Promise<ActionResponse<pets[]>> {
+export async function getFosterPets(): Promise<ActionResponse<pets[]>> {
     try {
         const userId = await getSession();
 
@@ -34,6 +34,33 @@ export async function getPets(): Promise<ActionResponse<pets[]>> {
             success: false,
             message: 'Failed to fetch pets data',
             error: 'Server error',
+        };
+    }
+}
+
+export async function geAvailablePets(): Promise<ActionResponse<pets[]>> {
+    try {
+        const pets = await getAllAvailablePets();
+
+        if (!pets.success) {
+            return {
+                success: false,
+                message: 'Failed to get pets',
+                error: 'Database error',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful!',
+            data: pets.data,
+        };
+    } catch (error) {
+        console.error('An error occured:', error);
+        return {
+            success: false,
+            message: 'Server failed',
+            error: 'Server side error',
         };
     }
 }
