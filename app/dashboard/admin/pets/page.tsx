@@ -7,13 +7,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getPets } from '@/server/pets';
+import { getFosterPets } from '@/server/pets';
 import { useQuery } from '@tanstack/react-query';
 
 export default function PetPage() {
     const queryPets = async () => {
         try {
-            const response = await getPets();
+            const response = await getFosterPets();
 
             if (!response.success) {
                 return null;
