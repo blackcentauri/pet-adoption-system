@@ -1,8 +1,9 @@
 'use server';
-import { getAllAvailablePets, getAllFosterPets } from '@/model/pet';
+import { createPet, getAllAvailablePets, getAllFosterPets } from '@/model/pet';
 import { ActionResponse } from './response';
 import { getSession } from '@/lib/session';
 import { pets } from '@/app/generated/prisma';
+import { CreatePetSchema } from '@/lib/pets';
 
 export async function getFosterPets(): Promise<ActionResponse<pets[]>> {
     try {
@@ -61,6 +62,58 @@ export async function geAvailablePets(): Promise<ActionResponse<pets[]>> {
             success: false,
             message: 'Server failed',
             error: 'Server side error',
+        };
+    }
+}
+
+export async function insertPet(formData: FormData): Promise<ActionResponse> {
+    try {
+        const data = {
+            name: formData.get('name') as string,
+            species: formData.get('species') as string,
+            age: formData.get('age') as string,
+            sex: formData.get('sex') as string,
+            breed: formData.get('breed') as string,
+            description: formData.get('description') as string,
+        };
+
+        const validateResult = CreatePetSchema.safeParse(data);
+
+        if (!validateResult.success) {
+            return {
+                success: false,
+                message: 'Validation failed',
+                error: `${validateResult.error.flatten().formErrors}`,
+            };
+        }
+
+        const pet = await createPet({
+            name: data.name,
+            species: data.species,
+            age: data.age,
+            sex: data.sex,
+            breed: data.breed,
+            description: data.description,
+        });
+
+        if (!pet.success) {
+            return {
+                success: false,
+                message: 'Failed to insert pet',
+                error: 'Server error',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Created Successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to insert pet. An error occured',
+            error: 'Server error',
         };
     }
 }
