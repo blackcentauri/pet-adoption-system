@@ -21,6 +21,7 @@ model pets {
   pet_name        String?     @db.VarChar(255)
   pet_age         String?     @db.VarChar(255)
   pet_species     String?     @db.VarChar(255)
+  pet_breed       String?     @db.VarChar(255)
   pet_status      pet_status?
   pet_description String?     @db.VarChar(255)
   pet_image       String?     @db.VarChar(255)

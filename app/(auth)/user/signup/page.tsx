@@ -6,7 +6,7 @@ import { adminSignUp, userSignUp } from '@/server/auth';
 import { ActionResponse } from '@/server/response';
 import { Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+
 
 const initialState: ActionResponse = {
     success: false,
@@ -17,10 +17,6 @@ const initialState: ActionResponse = {
 export default function SignupPage() {
     const router = useRouter();
    
-
-    // handle form input changes
-  
-    // async submit handler using useActionState
     const handleSubmit = async (
         prevState: ActionResponse,
         form: FormData
@@ -61,13 +57,13 @@ export default function SignupPage() {
                 />
             </div>
 
-            {/* Card */}
+            
             <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
                 <h1 className="text-2xl font-semibold text-center mb-6">
                     Create an account
                 </h1>
 
-                {/* Error Display */}
+                
                 {state.error && (
                     <p className="text-red-600 text-center mb-4">
                         {state.error}
@@ -79,7 +75,7 @@ export default function SignupPage() {
                     </p>
                 )}
 
-                {/* Form */}
+
                 <form action={formAction} className="space-y-4">
                     <input
                         id="firstName"
