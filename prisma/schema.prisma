@@ -21,12 +21,12 @@ model pets {
   pet_name        String?     @db.VarChar(255)
   pet_age         String?     @db.VarChar(255)
   pet_species     String?     @db.VarChar(255)
-  pet_breed       String?      @db.VarChar(255)
-  pet_status      pet_status?
-  pet_sex         String?     @db.VarChar(255)
+  pet_status      pet_status? @default(not_adopted)
   pet_description String?     @db.VarChar(255)
   pet_image       String?     @db.VarChar(255)
   user_id         Int
+  pet_breed       String?     @db.VarChar(255)
+  pet_sex         String?     @db.VarChar(255)
   users           users       @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_id")
 }
 
