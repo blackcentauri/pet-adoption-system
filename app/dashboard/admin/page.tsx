@@ -13,7 +13,6 @@ export default function AdminPage() {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Avatar</TableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Foster Request</TableHead>
@@ -21,7 +20,9 @@ export default function AdminPage() {
                         <TableHead>Adoption Date</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody></TableBody>
+                <TableBody>
+                    
+                </TableBody>
             </Table>
         </div>
     );
