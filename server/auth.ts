@@ -111,8 +111,8 @@ export async function userSignUp(formData: FormData): Promise<ActionResponse> {
     try {
         // Get form data
         const data = {
-            firstName: formData.get('firstname') as string,
-            lastName: formData.get('lastname') as string,
+            firstName: formData.get('firstName') as string,
+            lastName: formData.get('lastName') as string,
             username: formData.get('username') as string,
             email: formData.get('email') as string,
             password: formData.get('password') as string,

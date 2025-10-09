@@ -17,15 +17,18 @@ model adopted_pets {
 }
 
 model pets {
-  pet_id          Int         @id @default(autoincrement())
-  pet_name        String?     @db.VarChar(255)
-  pet_age         String?     @db.VarChar(255)
-  pet_species     String?     @db.VarChar(255)
-  pet_status      pet_status?
-  pet_description String?     @db.VarChar(255)
-  pet_image       String?     @db.VarChar(255)
+  pet_id          Int            @id @default(autoincrement())
+  pet_name        String?        @db.VarChar(255)
+  pet_age         String?        @db.VarChar(255)
+  pet_species     String?        @db.VarChar(255)
+  pet_status      pet_status?    @default(not_adopted)
+  pet_description String?        @db.VarChar(255)
+  pet_image       String?        @db.VarChar(255)
   user_id         Int
-  users           users       @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_id")
+  pet_breed       String?        @db.VarChar(255)
+  pet_sex         String?        @db.VarChar(255)
+  applications    applications[]
+  users           users          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_id")
 }
 
 model users {
@@ -39,7 +42,19 @@ model users {
   organization_name String?        @db.VarChar(255)
   created_at        DateTime?      @db.Timestamp(6)
   adopted_pets      adopted_pets[]
+  applications      applications[]
   pets              pets[]
+}
+
+model applications {
+  application_id     Int                 @id @default(autoincrement())
+  application_date   DateTime?           @db.Timestamp(6)
+  adoption_date      DateTime?           @db.Timestamp(6)
+  application_status application_status?
+  pet_id             Int
+  user_id            Int
+  pets               pets                @relation(fields: [pet_id], references: [pet_id], onDelete: NoAction, onUpdate: NoAction)
+  users              users               @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum pet_status {
@@ -51,4 +66,8 @@ enum pet_status {
 enum user_role {
   user
   admin
+}
+
+enum application_status {
+  applied__pending__approved @map("applied, pending, approved")
 }

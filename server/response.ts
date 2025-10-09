@@ -1,6 +1,7 @@
-export type ActionResponse = {
-  success: boolean;
-  message: string;
-  error?: string;
-  errors?: Record<string, string[]>;
+export type ActionResponse<T = undefined> = {
+    success: boolean;
+    message: string;
+    data?: T;
+    error?: string;
+    errors?: Record<string, string[]>;
 };
