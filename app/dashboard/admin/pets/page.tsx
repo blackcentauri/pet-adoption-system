@@ -7,13 +7,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getPets } from '@/server/pets';
+import { getFosterPets } from '@/server/pets';
 import { useQuery } from '@tanstack/react-query';
 
 export default function PetPage() {
     const queryPets = async () => {
         try {
-            const response = await getPets();
+            const response = await getFosterPets();
 
             if (!response.success) {
                 return null;
@@ -53,7 +53,19 @@ export default function PetPage() {
                                     </li>
                                     <li className="grid grid-cols-2">
                                         <div>Pet status: </div>
-                                        <div>{pet.pet_status}</div>
+                                        <div>
+                                            {pet.pet_status === 'not_adopted'
+                                                ? 'Not Adopted'
+                                                : 'Adopted'}
+                                        </div>
+                                    </li>
+                                    <li className="grid grid-cols-2">
+                                        <div>Breed: </div>
+                                        <div>{pet.pet_breed}</div>
+                                    </li>
+                                    <li className="grid grid-cols-2">
+                                        <div>Description: </div>
+                                        <div>{pet.pet_description}</div>
                                     </li>
                                 </ul>
                             </CardContent>
