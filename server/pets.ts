@@ -10,25 +10,15 @@ export async function getFosterPets(): Promise<ActionResponse<pets[]>> {
         const userId = await getSession();
 
         if (!userId || userId === null) {
-            return {
-                success: false,
-                message: 'No user found',
-            };
+            return { success: false, message: 'No user found' };
         }
 
         const pets = await getAllFosterPets(userId.userId);
 
         if (!pets.success) {
-            return {
-                success: false,
-                message: 'Server error',
-            };
+            return { success: false, message: 'Server error' };
         }
-        return {
-            success: true,
-            message: 'Successful!',
-            data: pets.data,
-        };
+        return { success: true, message: 'Successful!', data: pets.data };
     } catch (error) {
         console.error('Server side error: ', error);
         return {
