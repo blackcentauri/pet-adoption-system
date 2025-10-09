@@ -43,7 +43,7 @@ export default function AdoptionRequestForm() {
                 </nav>
                 <div>
                     <img
-                        src="/images/sample_profile.jpg"
+                        src="/images/.jpg"
                         alt="User"
                         className="w-10 h-10 rounded-full border border-gray-300"
                     />
@@ -58,7 +58,7 @@ export default function AdoptionRequestForm() {
 
                     <form
                         className="flex flex-col gap-5"
-                        onSubmit={handleSubmit}
+                        
                     >
                         <input
                             type="text"

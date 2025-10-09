@@ -78,7 +78,7 @@ export default function AvailablePetsPage() {
                 </nav>
                 <div>
                     <img
-                        src="/images/sample_profile.jpg"
+                        src="/images/.jpg"
                         alt="User"
                         className="w-10 h-10 rounded-full border border-gray-300"
                     />
