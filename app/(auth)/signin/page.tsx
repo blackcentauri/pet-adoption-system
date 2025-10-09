@@ -67,7 +67,10 @@ export default function SignInPage() {
         FormData
     >(handleSubmit, initialState);
     return (
-        <div className="bg-mute h-screen p-6 grid justify-center items-center">
+        <div
+            className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center font-poppins"
+            style={{ backgroundImage: "url('/images/signup_bg.jpg')" }}
+        >
             <Form
                 action={formAction}
                 className="bg-card rounded-2xl p-[2rem] w-md h-fit shadow-md grid gap-5"
