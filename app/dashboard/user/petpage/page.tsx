@@ -1,51 +1,18 @@
 'use client';
 
+import UserNavigation from '@/components/Navigation';
+import Image from 'next/image';
 
 export default function PetPage() {
     return (
         <div className="min-h-screen bg-[#fffce8] flex flex-col items-center font-poppins">
-            <header className="w-full bg-white flex justify-between items-center px-10 py-4 shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
-                <div className="flex items-center gap-2">
-                    <img
-                        src="/images/fur_legged_logo.png"
-                        alt="Fur Legged Logo"
-                        className="w-12 h-12"
-                    />
-                </div>
-                <nav className="flex items-center gap-8 text-[1rem] font-semibold  text-[#FED200]">
-                    <a href="/" className="hover:text-gray-500 transition">
-                        Home
-                    </a>
-                    <a href="#" className="hover:text-gray-500 transition">
-                        About Us
-                    </a>
-                    <a href="#" className="hover:text-gray-500 transition">
-                        Contact Us
-                    </a>
-                    <a
-                        href="/dashboard/user/availablepets"
-                        className="hover:text-gray-500 transition"
-                    >
-                        Available Pets
-                    </a>
-                    <a href="#" className="hover:text-gray-500 transition">
-                        All Pets
-                    </a>
-                </nav>
-                <div>
-                    <img
-                        src="/images/sample_profile.jpg"
-                        alt="User"
-                        className="w-10 h-10 rounded-full border border-gray-300"
-                    />
-                </div>
-            </header>
-
             <main className="flex flex-col md:flex-row items-center justify-center gap-12 px-10 py-12 w-full max-w-6xl">
                 <div className="w-full md:w-1/2 flex justify-center">
-                    <img
+                    <Image
                         src="/images/sample_dog.jpg"
                         alt="Pet"
+                        width={350}
+                        height={350}
                         className="w-[350px] h-[350px] rounded-xl object-cover shadow-[0_4px_20px_rgba(0,0,0,0.25)]"
                     />
                 </div>
