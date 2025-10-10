@@ -139,7 +139,7 @@ export default function OrganizationSignUp() {
                                 <p className="text-[0.9rem] text-center">
                                     Already have an account?{' '}
                                     <Link
-                                        href={'/signin'}
+                                        href={'/organization/signin'}
                                         className="text-primary"
                                     >
                                         Sign in

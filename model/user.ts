@@ -1,6 +1,6 @@
 import { PrismaClient, users } from '@/app/generated/prisma';
 import { ModelResponse } from './response';
-import { compare, hash } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 import { encryptPassword } from '@/util/encrypt-password';
 
 const prisma = new PrismaClient();
@@ -145,87 +145,38 @@ export async function verifyPassword(
         };
     }
 }
+// type FosterApplicationProps = {
+//     adminId: number;
+//     petId: number;
+// };
 
-export async function getOrganizationInfo(
-    email: string
-): Promise<ModelResponse<users>> {
-    try {
-        const organizationInfo = await prisma.users.findUnique({
-            where: {
-                email: email,
-            },
-        });
+// export async function inserUserApplication({
+//     adminId,
+//     petId,
+// }: FosterApplicationProps): Promise<ModelResponse> {
+//     try {
+//         const userId = await getSession();
 
-        if (!organizationInfo || organizationInfo === undefined) {
-            return {
-                success: false,
-                message: 'No user found',
-                error: 'User not found',
-            };
-        }
-
-        return {
-            success: true,
-            message: 'User found',
-            data: organizationInfo,
-        };
-    } catch (error) {
-        console.error('An error occured while querying', error);
-        return {
-            success: false,
-            message: 'Failed to query organization info',
-            error: `${error}`,
-        };
-    }
-}
-
-type OrganizationProps = {
-    organizationName: string;
-    username: string;
-    email: string;
-    password: string;
-};
-
-export async function insertOrganization({
-    organizationName,
-    username,
-    email,
-    password,
-}: OrganizationProps): Promise<ModelResponse<users>> {
-    try {
-        const hashedPassword = await encryptPassword(password);
-        const createdAt = new Date();
-        const USER_ROLE = 'admin';
-        const organization = await prisma.users.create({
-            data: {
-                organization_name: organizationName,
-                username: username,
-                email: email,
-                password: hashedPassword,
-                role: USER_ROLE,
-                created_at: createdAt,
-            },
-        });
-
-        if (!organization || organization === undefined) {
-            return {
-                success: false,
-                message: 'Failed to insert organization info',
-                error: 'Database error! Failed to insert organization info',
-            };
-        }
-
-        return {
-            success: true,
-            message: 'Insertion successful!',
-            data: organization,
-        };
-    } catch (error) {
-        console.error('An error occured: ', error);
-        return {
-            success: false,
-            message: 'Failed to insert current user',
-            error: 'Database error! Insertion failed',
-        };
-    }
-}
+//         if (!userId || userId.userId === null || userId.userId === undefined) {
+//             return {
+//                 success: false,
+//                 message: 'No user found!',
+//                 error: 'Unauthorized action',
+//             };
+//         }
+//         const applicationDate = new Date();
+//         const insertRequest = await prisma.applications.create({
+//             data: {
+//                 application_date: applicationDate,
+//                 user_id: userId.userId,
+//             },
+//         });
+//     } catch (error) {
+//         console.error('An error occured: ', error);
+//         return {
+//             success: false,
+//             message: 'Insertion failed, An error occured',
+//             error: 'Database error',
+//         };
+//     }
+// }

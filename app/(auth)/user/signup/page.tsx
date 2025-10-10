@@ -2,12 +2,11 @@
 
 import { useActionState } from 'react';
 import { useRouter } from 'next/navigation';
-import { adminSignUp, userSignUp } from '@/server/auth';
+import { userSignUp } from '@/server/auth';
 import { ActionResponse } from '@/server/response';
 import { Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
-
-import { useState } from 'react';
+import Image from 'next/image';
 
 const initialState: ActionResponse = {
     success: false,
@@ -17,10 +16,9 @@ const initialState: ActionResponse = {
 
 export default function SignupPage() {
     const router = useRouter();
-   
 
     // handle form input changes
-  
+
     // async submit handler using useActionState
     const handleSubmit = async (
         prevState: ActionResponse,
@@ -55,21 +53,21 @@ export default function SignupPage() {
             style={{ backgroundImage: "url('/images/signup_bg.jpg')" }}
         >
             <div className="mb-6 flex flex-col items-center">
-                <img
+                <Image
                     src="/images/fur_legged_logo.png"
                     alt="Fur Legged"
                     className="w-20 h-20"
+                    width={48}
+                    height={48}
                 />
             </div>
 
-            
             {/* Card */}
             <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
                 <h1 className="text-2xl font-semibold text-center mb-6">
                     Create an account
                 </h1>
 
-                
                 {/* Error Display */}
                 {state.error && (
                     <p className="text-red-600 text-center mb-4">
@@ -81,7 +79,6 @@ export default function SignupPage() {
                         {state.message}
                     </p>
                 )}
-
 
                 {/* Form */}
                 <form action={formAction} className="space-y-4">
