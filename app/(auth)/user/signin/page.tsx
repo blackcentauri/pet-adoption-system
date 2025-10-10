@@ -138,10 +138,10 @@ export default function SignInPage() {
                         <p className="text-[0.9rem]">
                             Are you an organization?{' '}
                             <Link
-                                href={'/organization/signup'}
+                                href={'/organization/signin'}
                                 className="text-primary font-medium"
                             >
-                                Sign up
+                                Sign in
                             </Link>{' '}
                             here
                         </p>

@@ -27,7 +27,7 @@ export default function Home() {
                 </nav>
 
                 <div className="flex gap-5">
-                    <Link href={'/signin'}>
+                    <Link href={'/user/signin'}>
                         <Button
                             size={'lg'}
                             variant={'secondary'}

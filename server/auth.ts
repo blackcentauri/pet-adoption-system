@@ -3,14 +3,18 @@
 import { AdminSignUpSchema, SignInSchema, UserSignUpSchema } from '@/lib/auth';
 import { ActionResponse } from './response';
 import {
-    getOrganizationInfo,
     getUserInfo,
     getUsername,
-    insertOrganization,
     insertUser,
     verifyPassword,
 } from '@/model/user';
-import { hash } from 'bcryptjs';
+
+import {
+    getOrganizationInfo,
+    insertOrganization,
+    getUsername as getAdminUsername,
+    getAdminInfo,
+} from '@/model/admin';
 import { createSession } from '@/lib/session';
 
 export async function signIn(formData: FormData): Promise<ActionResponse> {
@@ -81,6 +85,100 @@ export async function signIn(formData: FormData): Promise<ActionResponse> {
             userInfo.data.user_id,
             userInfo.data.username,
             userInfo.data.role
+        );
+
+        // Checks if session creation is successful
+        if (!session) {
+            return {
+                success: false,
+                message: 'Failed to create session',
+                error: 'Session failed',
+            };
+        }
+
+        // Return true if successful
+        return {
+            success: true,
+            message: 'Sign in successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured while signing you in', error);
+        return {
+            success: false,
+            message: 'Sign in failed. An error occured',
+            error: 'Failed to validate information. An error occured',
+        };
+    }
+}
+
+export async function adminSignIn(formData: FormData): Promise<ActionResponse> {
+    try {
+        const data = {
+            email: formData.get('email') as string,
+            password: formData.get('password') as string,
+        };
+
+        // Validate form data using zod sign in schema
+        const validateResult = SignInSchema.safeParse(data);
+
+        if (!validateResult.success) {
+            return {
+                success: false,
+                message: 'Validation failed',
+                error: 'An error occured while validating',
+                errors: validateResult.error.flatten().fieldErrors,
+            };
+        }
+
+        // Query user info if it exists
+        const adminInfo = await getAdminInfo(data.email);
+
+        if (
+            !adminInfo.success ||
+            adminInfo.data === undefined ||
+            typeof adminInfo.data !== 'object'
+        ) {
+            return {
+                success: false,
+                message: `Admin not found`,
+                error: 'No admin found',
+                errors: {
+                    email: ['Invalid email'],
+                },
+            };
+        }
+
+        // Validate user password
+        const isPasswordValid = await verifyPassword(
+            data.password,
+            adminInfo.data.password
+        );
+
+        if (!isPasswordValid.success) {
+            return {
+                success: false,
+                message: 'Invalid username or password',
+                error: 'Invalid username or password',
+            };
+        }
+
+        // Type check if role and username is string and not null
+        if (
+            typeof adminInfo.data.username !== 'string' ||
+            typeof adminInfo.data.role !== 'string'
+        ) {
+            return {
+                success: false,
+                message: 'Invalid user data',
+                error: 'User information is incomplete',
+            };
+        }
+
+        // Create session using JWT token
+        const session = await createSession(
+            adminInfo.data.admin_id,
+            adminInfo.data.username,
+            adminInfo.data.role
         );
 
         // Checks if session creation is successful
@@ -232,7 +330,7 @@ export async function adminSignUp(formData: FormData): Promise<ActionResponse> {
         }
 
         // Checks if username already taken
-        const organizationUsername = await getUsername(data.username);
+        const organizationUsername = await getAdminUsername(data.username);
 
         if (organizationUsername.success) {
             return {
@@ -262,7 +360,7 @@ export async function adminSignUp(formData: FormData): Promise<ActionResponse> {
         }
 
         const session = await createSession(
-            organization.data.user_id,
+            organization.data.admin_id,
             organization.data.username,
             organization.data.role
         );

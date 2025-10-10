@@ -34,12 +34,12 @@ export async function getAllAvailablePets(): Promise<ModelResponse<pets[]>> {
 }
 
 export async function getAllFosterPets(
-    userId: number
+    adminId: number
 ): Promise<ModelResponse<pets[]>> {
     try {
         const fosterPets = await prisma.pets.findMany({
             where: {
-                user_id: userId,
+                admin_id: adminId,
             },
         });
 
@@ -95,7 +95,7 @@ export async function createPet({
                 pet_sex: sex,
                 pet_breed: breed,
                 pet_description: description,
-                user_id: user_id.userId,
+                admin_id: user_id.userId,
             },
         });
 
