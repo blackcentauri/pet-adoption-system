@@ -1,65 +1,20 @@
 'use client';
+import UserNavigation from '@/components/Navigation';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function AdoptionRequestForm() {
     const [showPopup, setShowPopup] = useState(false);
 
-   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-       e.preventDefault();
-       setShowPopup(true);
-
-
-   };
-
     return (
         <div className="min-h-screen bg-[#fffce8] flex flex-col items-center font-poppins relative">
-            <header className="w-full bg-white flex justify-between items-center px-10 py-4 shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
-                <div className="flex items-center gap-2">
-                    <img
-                        src="/images/fur_legged_logo.png"
-                        alt="Fur Legged Logo"
-                        className="w-12 h-12"
-                    />
-                </div>
-                <nav className="flex items-center gap-8 text-[1rem] font-semibold text-[#FED200]">
-                    <a href="/" className="hover:text-gray-500 transition">
-                        Home
-                    </a>
-                    <a href="#" className="hover:text-gray-500 transition">
-                        About Us
-                    </a>
-                    <a href="#" className="hover:text-gray-500 transition">
-                        Contact Us
-                    </a>
-                    <a
-                        href="/dashboard/user/availablepets"
-                        className="hover:text-gray-500 transition"
-                    >
-                        Available Pets
-                    </a>
-                    <a href="#" className="hover:text-gray-500 transition">
-                        All Pets
-                    </a>
-                </nav>
-                <div>
-                    <img
-                        src="/images/.jpg"
-                        alt="User"
-                        className="w-10 h-10 rounded-full border border-gray-300"
-                    />
-                </div>
-            </header>
-
             <main className="flex justify-center items-center flex-grow px-4 py-10">
                 <div className="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.2)] rounded-xl p-10 w-200">
                     <h1 className="text-2xl font-extrabold text-center mb-8">
                         ADOPTION REQUEST FORM
                     </h1>
 
-                    <form
-                        className="flex flex-col gap-5"
-                        
-                    >
+                    <form className="flex flex-col gap-5">
                         <input
                             type="text"
                             value="BINGO (AUTO-FILLED. NOT EDITABLE)"
@@ -87,12 +42,12 @@ export default function AdoptionRequestForm() {
                         >
                             Submit
                         </button>
-                        <a
+                        <Link
                             href="/dashboard/user/petpage"
                             className="border border-black text-center text-black font-semibold py-3 rounded-full hover:bg-gray-100 transition"
                         >
                             Cancel
-                        </a>
+                        </Link>
                     </form>
                 </div>
             </main>

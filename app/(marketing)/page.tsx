@@ -5,32 +5,48 @@ import Link from 'next/link';
 export default function Home() {
     return (
         <div className="flex flex-col min-h-screen items-center bg-white font-poppins bg-[url('/images/bg1.svg')] bg-cover">
-            <header className="w-full bg-white flex justify-between items-center px-10 py-4 shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
-                <img
+            <nav className="w-full bg-white flex justify-between items-center px-10 py-4 shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
+                <Image
                     src="/images/fur_legged_logo.png"
                     alt="Fur Legged Logo"
                     className="w-12 h-12"
+                    width={50}
+                    height={50}
                 />
 
                 <nav className="flex items-center gap-8 text-[1rem] font-semibold text-[#FED200]">
-                    <a href="/" className="hover:text-gray-500 transition">
+                    <Link href="/" className="hover:text-gray-500 transition">
                         Home
-                    </a>
+                    </Link>
                     <a href="#" className="hover:text-gray-500 transition">
                         About Us
                     </a>
                     <a href="#" className="hover:text-gray-500 transition">
                         Contact Us
                     </a>
-                   
                 </nav>
 
-                <img
-                    src="/images/.jpg"
-                    alt="User"
-                    className="w-10 h-10 rounded-full border border-gray-300"
-                />
-            </header>
+                <div className="flex gap-5">
+                    <Link href={'/signin'}>
+                        <Button
+                            size={'lg'}
+                            variant={'secondary'}
+                            className="bg-primary font-poppins text-white font-medium"
+                        >
+                            Sign in
+                        </Button>
+                    </Link>
+                    <Link href={'/user/signup'}>
+                        <Button
+                            size={'lg'}
+                            variant={'ghost'}
+                            className="font-poppins font-medium"
+                        >
+                            Sign up
+                        </Button>
+                    </Link>
+                </div>
+            </nav>
 
             <main className="flex items-center justify-between w-full px-8 lg:px-20 py-10 max-w-7xl">
                 <div className="flex flex-col gap-4 max-w-sm">

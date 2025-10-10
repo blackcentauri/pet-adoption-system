@@ -1,15 +1,17 @@
 'use client';
 
 import { UploadIcon } from 'lucide-react';
+import Image from 'next/image';
 
 export default function EditProfilePage() {
     return (
         <div className="h-screen w-full bg-[#fffce8] flex flex-col items-center p-6 font-poppins ">
             <div className="mb-6 flex flex-col items-center">
-                <img
+                <Image
                     src="/images/fur_legged_logo.png"
                     alt="Fur Legged"
-                    className="w-15 h-15"
+                    height={50}
+                    width={50}
                 />
             </div>
 
@@ -20,9 +22,11 @@ export default function EditProfilePage() {
                     </h2>
 
                     <div className="relative mb-4">
-                        <img
+                        <Image
                             src="/images/sample_profile.jpg"
                             alt="Profile"
+                            height={60}
+                            width={60}
                             className="w-32 h-32 rounded-full object-cover"
                         />
                     </div>
