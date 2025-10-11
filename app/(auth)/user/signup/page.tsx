@@ -20,10 +20,7 @@ export default function SignupPage() {
     // handle form input changes
 
     // async submit handler using useActionState
-    const handleSubmit = async (
-        prevState: ActionResponse,
-        form: FormData
-    ): Promise<ActionResponse> => {
+    const handleSubmit = async (prevState: ActionResponse, form: FormData): Promise<ActionResponse> => {
         try {
             const result = await userSignUp(form);
 
@@ -42,10 +39,7 @@ export default function SignupPage() {
         }
     };
 
-    const [state, formAction, isPending] = useActionState<
-        ActionResponse,
-        FormData
-    >(handleSubmit, initialState);
+    const [state, formAction, isPending] = useActionState<ActionResponse, FormData>(handleSubmit, initialState);
 
     return (
         <div
@@ -64,21 +58,11 @@ export default function SignupPage() {
 
             {/* Card */}
             <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">
-                <h1 className="text-2xl font-semibold text-center mb-6">
-                    Create an account
-                </h1>
+                <h1 className="text-2xl font-semibold text-center mb-6">Create an account</h1>
 
                 {/* Error Display */}
-                {state.error && (
-                    <p className="text-red-600 text-center mb-4">
-                        {state.error}
-                    </p>
-                )}
-                {state.message && !state.success && (
-                    <p className="text-red-600 text-center mb-4">
-                        {state.message}
-                    </p>
-                )}
+                {state.error && <p className="text-red-600 text-center mb-4">{state.error}</p>}
+                {state.message && !state.success && <p className="text-red-600 text-center mb-4">{state.message}</p>}
 
                 {/* Form */}
                 <form action={formAction} className="space-y-4">
@@ -137,19 +121,16 @@ export default function SignupPage() {
                         disabled={isPending}
                         className="w-full py-3 bg-yellow-400 text-white font-medium rounded-lg hover:bg-yellow-500 transition flex justify-center items-center"
                     >
-                        {isPending ? (
-                            <Loader2Icon className="animate-spin" />
-                        ) : (
-                            'Create account'
-                        )}
+                        {isPending ? <Loader2Icon className="animate-spin" /> : 'Create account'}
                     </button>
 
                     {/* Sign in redirect */}
                     <p className="text-sm text-center mt-3">
-                        Already have an account?{' '}
-                        <Link href="/signin" className="text-yellow-500">
-                            Sign in
+                        Are you an organization?{' '}
+                        <Link href="/dashboard/signup" className="text-yellow-500">
+                            Sign up {' '}
                         </Link>
+                        here instead
                     </p>
                 </form>
             </div>

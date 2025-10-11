@@ -1,4 +1,4 @@
-import { pets, PrismaClient } from '@/app/generated/prisma';
+import { pet_status, pets, PrismaClient } from '@/app/generated/prisma';
 import { ModelResponse } from './response';
 import { getSession } from '@/lib/session';
 const prisma = new PrismaClient();
@@ -33,9 +33,7 @@ export async function getAllAvailablePets(): Promise<ModelResponse<pets[]>> {
     }
 }
 
-export async function getAllFosterPets(
-    adminId: number
-): Promise<ModelResponse<pets[]>> {
+export async function getAllFosterPets(adminId: number): Promise<ModelResponse<pets[]>> {
     try {
         const fosterPets = await prisma.pets.findMany({
             where: {
@@ -68,14 +66,7 @@ type PetsProps = {
     description: string;
 };
 
-export async function createPet({
-    name,
-    species,
-    age,
-    sex,
-    breed,
-    description,
-}: PetsProps): Promise<ModelResponse> {
+export async function createPet({ name, species, age, sex, breed, description }: PetsProps): Promise<ModelResponse> {
     try {
         const user_id = await getSession();
 
@@ -116,6 +107,70 @@ export async function createPet({
         return {
             success: false,
             message: 'Insertion failed',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function updatePetStatus(petId: number, petStatus: pet_status): Promise<ModelResponse> {
+    try {
+        const updateStatus = await prisma.pets.update({
+            where: {
+                pet_id: petId,
+            },
+            data: {
+                pet_status: petStatus,
+            },
+        });
+
+        if (!updateStatus) {
+            return {
+                success: false,
+                message: 'Failed to update pet status',
+                error: 'Database error',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Updated successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'An error occured while updating pet status',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function createAdoptedPet(userId: number, petId: number, adoptionDate: Date): Promise<ModelResponse> {
+    try {
+        const adoption = await prisma.adopted_pets.create({
+            data: {
+                user_id: userId,
+                pet_id: petId,
+                date_of_adoption: adoptionDate,
+            },
+        });
+
+        if (!adoption) {
+            return {
+                success: false,
+                message: 'Failed to create adoption',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Created successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to create pet adoption',
             error: 'Database error',
         };
     }

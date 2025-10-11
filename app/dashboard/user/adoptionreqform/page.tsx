@@ -1,5 +1,4 @@
 'use client';
-import UserNavigation from '@/components/Navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -10,9 +9,7 @@ export default function AdoptionRequestForm() {
         <div className="min-h-screen bg-[#fffce8] flex flex-col items-center font-poppins relative">
             <main className="flex justify-center items-center flex-grow px-4 py-10">
                 <div className="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.2)] rounded-xl p-10 w-200">
-                    <h1 className="text-2xl font-extrabold text-center mb-8">
-                        ADOPTION REQUEST FORM
-                    </h1>
+                    <h1 className="text-2xl font-extrabold text-center mb-8">ADOPTION REQUEST FORM</h1>
 
                     <form className="flex flex-col gap-5">
                         <input
@@ -61,9 +58,7 @@ export default function AdoptionRequestForm() {
                         >
                             ×
                         </button>
-                        <h2 className="text-3xl font-extrabold text-[#FED200] mb-4">
-                            THANK YOU!
-                        </h2>
+                        <h2 className="text-3xl font-extrabold text-[#FED200] mb-4">THANK YOU!</h2>
                         <p className="text-gray-600 font-medium">
                             YOUR ADOPTION REQUEST HAS BEEN RECEIVED.
                             <br />
