@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import * as jose from 'jose';
 import { cache } from 'react';
 
-interface JWTPayload {
+export interface JWTPayload {
     userId: number;
     username: string;
     role: string;
