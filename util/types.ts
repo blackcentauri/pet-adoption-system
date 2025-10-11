@@ -1,0 +1,1 @@
+export const applicationTypes = ['applied', 'pending', 'approved'];

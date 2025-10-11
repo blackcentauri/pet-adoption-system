@@ -1,5 +1,5 @@
 'use server';
-import { createPet, getAllAvailablePets, getAllFosterPets } from '@/model/pet';
+import { createAdoptedPet, createPet, getAllAvailablePets, getAllFosterPets } from '@/model/pet';
 import { ActionResponse } from './response';
 import { getSession } from '@/lib/session';
 import { pets } from '@/app/generated/prisma';
@@ -103,6 +103,64 @@ export async function insertPet(formData: FormData): Promise<ActionResponse> {
         return {
             success: false,
             message: 'Failed to insert pet. An error occured',
+            error: 'Server error',
+        };
+    }
+}
+
+export async function getAllPets(): Promise<ActionResponse<pets[]>> {
+    try {
+        const pets = await getAllAvailablePets();
+
+        if (!pets.success) {
+            return {
+                success: false,
+                message: 'Failed to fetch data',
+                error: 'Database error',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Fetch successfully!',
+            data: pets.data,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to fetch data',
+            error: 'Server error',
+        };
+    }
+}
+
+export async function createPetAdoption(petId: number, adoptionDate: Date): Promise<ActionResponse> {
+    try {
+        const userId = await getSession();
+
+        if (!userId || userId === null) {
+            return { success: false, message: 'No user found' };
+        }
+
+        const createAdoption = await createAdoptedPet(userId.userId, petId, adoptionDate);
+
+        if (!createAdoption.success) {
+            return {
+                success: false,
+                message: 'Failed to create adopted pet',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Created successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed too create pet adoption',
             error: 'Server error',
         };
     }

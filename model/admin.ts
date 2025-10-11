@@ -1,12 +1,11 @@
-import { admins, PrismaClient } from '@/app/generated/prisma';
+import { admins, applications, pets, PrismaClient, users } from '@/app/generated/prisma';
 import { ModelResponse } from './response';
 import { encryptPassword } from '@/util/encrypt-password';
+import { createAdoptedPet, updatePetStatus } from './pet';
 
 const prisma = new PrismaClient();
 
-export async function getOrganizationInfo(
-    email: string
-): Promise<ModelResponse<admins>> {
+export async function getOrganizationInfo(email: string): Promise<ModelResponse<admins>> {
     try {
         const organizationInfo = await prisma.admins.findUnique({
             where: {
@@ -88,9 +87,7 @@ export async function insertOrganization({
     }
 }
 
-export async function getAdminInfo(
-    email: string
-): Promise<ModelResponse<admins>> {
+export async function getAdminInfo(email: string): Promise<ModelResponse<admins>> {
     try {
         const adminInfo = await prisma.admins.findUnique({
             where: {
@@ -120,9 +117,7 @@ export async function getAdminInfo(
     }
 }
 
-export async function getUsername(
-    username: string
-): Promise<ModelResponse<admins>> {
+export async function getUsername(username: string): Promise<ModelResponse<admins>> {
     try {
         const isUsernameExists = await prisma.admins.findUnique({
             where: {
@@ -148,6 +143,116 @@ export async function getUsername(
             success: false,
             message: 'Query failed',
             error: `${error}`,
+        };
+    }
+}
+
+export type ApplicationsProps = applications & {
+    admins: admins;
+    pets: pets;
+    users: users;
+};
+
+export async function getAllApplications(adminId: number): Promise<ModelResponse<ApplicationsProps[]>> {
+    try {
+        const applications = await prisma.applications.findMany({
+            where: {
+                admin_id: adminId,
+                application_status: {
+                    not: 'approved',
+                },
+            },
+            include: {
+                admins: true,
+                pets: true,
+                users: true,
+            },
+        });
+
+        return {
+            success: true,
+            message: 'Successful query!',
+            data: applications,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Query failed',
+            error: 'Database error, failed to query',
+        };
+    }
+}
+
+type ApplicationStatusProps = {
+    applicationId: number;
+    applicationStatus: 'applied' | 'pending' | 'approved';
+    adoptionDate: Date;
+};
+
+export async function updateApplicationStatus({
+    applicationId,
+    applicationStatus,
+    adoptionDate,
+}: ApplicationStatusProps): Promise<ModelResponse> {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data: any = {
+            application_status: applicationStatus,
+        };
+        if (applicationStatus === 'approved') {
+            data.adoption_date = adoptionDate;
+        }
+
+        const updateApplication = await prisma.applications.update({
+            where: {
+                application_id: applicationId,
+            },
+            data,
+        });
+
+        if (applicationStatus === 'approved') {
+            const petAdoption = await createAdoptedPet(
+                updateApplication.user_id,
+                updateApplication.pet_id,
+                adoptionDate
+            );
+
+            if (!petAdoption.success) {
+                return {
+                    success: false,
+                    message: 'Failed to create pet adoption',
+                };
+            }
+            const ADOPTED_STATUS = 'adopted';
+            const petStatus = await updatePetStatus(updateApplication.pet_id, ADOPTED_STATUS);
+
+            if (!petStatus.success) {
+                return {
+                    success: false,
+                    message: 'Failed to update pet status',
+                };
+            }
+        }
+
+        if (!updateApplication) {
+            return {
+                success: false,
+                message: 'Failed to update application',
+                error: 'Database error',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Updated successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured:', error);
+        return {
+            success: false,
+            message: 'Failed to query',
+            error: 'Database error',
         };
     }
 }

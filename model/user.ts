@@ -6,9 +6,7 @@ import { encryptPassword } from '@/util/encrypt-password';
 const prisma = new PrismaClient();
 
 // Query user info fromm database
-export async function getUserInfo(
-    email: string
-): Promise<ModelResponse<users>> {
+export async function getUserInfo(email: string): Promise<ModelResponse<users>> {
     try {
         const userInfo = await prisma.users.findUnique({
             where: {
@@ -38,9 +36,7 @@ export async function getUserInfo(
     }
 }
 
-export async function getUsername(
-    username: string
-): Promise<ModelResponse<users>> {
+export async function getUsername(username: string): Promise<ModelResponse<users>> {
     try {
         const isUsernameExists = await prisma.users.findUnique({
             where: {
@@ -118,10 +114,7 @@ export async function insertUser(
 }
 
 // Verifiy password
-export async function verifyPassword(
-    password: string,
-    recordedPassword: string
-): Promise<ModelResponse> {
+export async function verifyPassword(password: string, recordedPassword: string): Promise<ModelResponse> {
     try {
         const isPasswordValid = await compare(password, recordedPassword);
 
@@ -145,38 +138,46 @@ export async function verifyPassword(
         };
     }
 }
-// type FosterApplicationProps = {
-//     adminId: number;
-//     petId: number;
-// };
+type FosterApplicationProps = {
+    userId: number;
+    adminId: number;
+    petId: number;
+    applicationDate: Date;
+};
 
-// export async function inserUserApplication({
-//     adminId,
-//     petId,
-// }: FosterApplicationProps): Promise<ModelResponse> {
-//     try {
-//         const userId = await getSession();
+export async function inserUserApplication({
+    userId,
+    adminId,
+    petId,
+    applicationDate,
+}: FosterApplicationProps): Promise<ModelResponse> {
+    try {
+        const insertRequest = await prisma.applications.create({
+            data: {
+                application_date: applicationDate,
+                user_id: userId,
+                admin_id: adminId,
+                pet_id: petId,
+            },
+        });
 
-//         if (!userId || userId.userId === null || userId.userId === undefined) {
-//             return {
-//                 success: false,
-//                 message: 'No user found!',
-//                 error: 'Unauthorized action',
-//             };
-//         }
-//         const applicationDate = new Date();
-//         const insertRequest = await prisma.applications.create({
-//             data: {
-//                 application_date: applicationDate,
-//                 user_id: userId.userId,
-//             },
-//         });
-//     } catch (error) {
-//         console.error('An error occured: ', error);
-//         return {
-//             success: false,
-//             message: 'Insertion failed, An error occured',
-//             error: 'Database error',
-//         };
-//     }
-// }
+        if (!insertRequest) {
+            return {
+                success: false,
+                message: 'Failed to create application',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Created successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Insertion failed, An error occured',
+            error: 'Database error',
+        };
+    }
+}
