@@ -11,7 +11,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from './ui/sidebar';
-import { Home, Dog, PawPrint } from 'lucide-react';
+import { Home, PawPrint, UsersRound, MessageSquareText } from 'lucide-react';
 import { UserNavigation } from './Nav-User';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
@@ -26,12 +26,20 @@ const adminRoutes = [
     {
         title: 'Pet lists',
         url: '/dashboard/admin/pets',
-        icon: Dog,
+        icon: PawPrint,
     },
     {
-        title: 'Add pet',
-        url: '/dashboard/admin/add',
-        icon: PawPrint,
+        title: 'Manage adoptions',
+        url: '/dashboard/admin/manage-applications',
+        icon: UsersRound,
+    },
+];
+
+const otherRoutes = [
+    {
+        title: 'Foster update',
+        url: '/dashboard/admin/foster-update',
+        icon: MessageSquareText,
     },
 ];
 
@@ -57,6 +65,21 @@ export default function LeftSidebar() {
                     <SidebarGroupLabel>Main </SidebarGroupLabel>
                     <SidebarMenu>
                         {adminRoutes.map((route) => (
+                            <SidebarMenuItem key={route.title}>
+                                <SidebarMenuButton asChild>
+                                    <Link href={route.url}>
+                                        <route.icon />
+                                        <span>{route.title}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+                    </SidebarMenu>
+                </SidebarGroup>
+                <SidebarGroup>
+                    <SidebarGroupLabel>Others</SidebarGroupLabel>
+                    <SidebarMenu>
+                        {otherRoutes.map((route) => (
                             <SidebarMenuItem key={route.title}>
                                 <SidebarMenuButton asChild>
                                     <Link href={route.url}>

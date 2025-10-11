@@ -4,6 +4,7 @@ import { ActionResponse } from './response';
 import { getSession } from '@/lib/session';
 import { pets } from '@/app/generated/prisma';
 import { CreatePetSchema } from '@/lib/pets';
+import { deletePet as removePet } from '@/model/pet';
 
 export async function getFosterPets(): Promise<ActionResponse<pets[]>> {
     try {
@@ -161,6 +162,31 @@ export async function createPetAdoption(petId: number, adoptionDate: Date): Prom
         return {
             success: false,
             message: 'Failed too create pet adoption',
+            error: 'Server error',
+        };
+    }
+}
+
+export async function deletePet(petId: number): Promise<ActionResponse> {
+    try {
+        const pet = await removePet(petId);
+
+        if (!pet.success) {
+            return {
+                success: false,
+                message: 'Failed to delete pet',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Pet deleted successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to delete pet',
             error: 'Server error',
         };
     }

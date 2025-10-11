@@ -175,3 +175,32 @@ export async function createAdoptedPet(userId: number, petId: number, adoptionDa
         };
     }
 }
+
+export async function deletePet(petId: number): Promise<ModelResponse> {
+    try {
+        const pet = await prisma.pets.delete({
+            where: {
+                pet_id: petId,
+            },
+        });
+
+        if (!pet) {
+            return {
+                success: false,
+                message: 'Failed to delete pet',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Pet deleted successfully',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to delete pet',
+            error: 'Database error',
+        };
+    }
+}
