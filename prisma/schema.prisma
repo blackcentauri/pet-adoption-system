@@ -13,7 +13,7 @@ model adopted_pets {
   user_id          Int
   pet_id           Int
   date_of_adoption DateTime? @db.Timestamp(6)
-  pets             pets      @relation(fields: [pet_id], references: [pet_id], onDelete: NoAction, onUpdate: NoAction, map: "pet_fk")
+  pets             pets      @relation(fields: [pet_id], references: [pet_id], onDelete: Cascade, onUpdate: NoAction, map: "pet_fk")
   users            users     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_fk")
 }
 
@@ -54,7 +54,7 @@ model applications {
   pet_id             Int
   admin_id           Int
   user_id            Int
-  pets               pets                @relation(fields: [pet_id], references: [pet_id], onDelete: NoAction, onUpdate: NoAction)
+  pets               pets                @relation(fields: [pet_id], references: [pet_id], onDelete: Cascade, onUpdate: NoAction)
   admins             admins              @relation(fields: [admin_id], references: [admin_id], onDelete: NoAction, onUpdate: NoAction)
   users              users               @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 }
