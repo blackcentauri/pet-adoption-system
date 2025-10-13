@@ -9,8 +9,10 @@ import { Dialog } from '@radix-ui/react-dialog';
 import { toast } from 'sonner';
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 export default function AddPet() {
+    const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
     const mutation = useMutation({
         mutationFn: async (formData: FormData) => {
@@ -31,8 +33,11 @@ export default function AddPet() {
     };
 
     return (
-        <Dialog>
-            <DialogTrigger className="bg-[#FED200] hover:bg-[#e3ba00] text-white font-semibold rounded-xl px-14 shadow-md transition-all">
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger
+                className="bg-[#FED200] hover:bg-[#e3ba00] text-white font-semibold rounded-xl px-14 shadow-md transition-all"
+                onClick={() => setOpen(true)}
+            >
                 New pet
             </DialogTrigger>
             <DialogContent>
@@ -80,7 +85,7 @@ export default function AddPet() {
                         <FormLabel>Description</FormLabel>
                         <Textarea id="description" name="description" placeholder="Description" required />
                     </FormGroup>
-                    <Button variant={'default'} className="mt-4">
+                    <Button variant={'default'} className="mt-4" onClick={() => setOpen(false)}>
                         Save
                     </Button>
                 </Form>
