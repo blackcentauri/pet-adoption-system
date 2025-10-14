@@ -256,3 +256,74 @@ export async function updateApplicationStatus({
         };
     }
 }
+
+export async function getAllApplicationsCount(adminId: number): Promise<ModelResponse<number>> {
+    try {
+        const applications = await prisma.applications.count({
+            where: {
+                admin_id: adminId,
+            },
+        });
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: applications,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to query applications count',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function getAllPendingApplicationsCount(adminId: number): Promise<ModelResponse<number>> {
+    try {
+        const pendingApplications = await prisma.applications.count({
+            where: {
+                admin_id: adminId,
+                application_status: 'pending',
+            },
+        });
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: pendingApplications,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to query pending applications count',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function getAllApprovedApplications(adminId: number): Promise<ModelResponse<number>> {
+    try {
+        const pendingApplications = await prisma.applications.count({
+            where: {
+                admin_id: adminId,
+                application_status: 'approved',
+            },
+        });
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: pendingApplications,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to query pending applications count',
+            error: 'Database error',
+        };
+    }
+}

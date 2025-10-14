@@ -1,7 +1,14 @@
 'use server';
 import { getSession, JWTPayload } from '@/lib/session';
 import { ActionResponse } from './response';
-import { ApplicationsProps, getAllApplications, updateApplicationStatus } from '@/model/admin';
+import {
+    ApplicationsProps,
+    getAllApplications,
+    getAllApplicationsCount,
+    getAllApprovedApplications,
+    getAllPendingApplicationsCount,
+    updateApplicationStatus,
+} from '@/model/admin';
 import { logOutSession } from '@/lib/auth';
 
 export async function getAllFosterRequests(): Promise<ActionResponse<ApplicationsProps[]>> {
@@ -140,6 +147,83 @@ export async function deleteCurrentSession(): Promise<ActionResponse> {
         return {
             success: true,
             message: 'Log out successfully!',
+        };
+    }
+}
+
+type ApplicationCounts = {
+    appliedCounts: number;
+    pendingCounts: number;
+    approvedCounts: number;
+};
+
+export async function fetchAllApplicationsCount(): Promise<ActionResponse<ApplicationCounts>> {
+    const fallbackData: ApplicationCounts = {
+        appliedCounts: 0,
+        pendingCounts: 0,
+        approvedCounts: 0,
+    };
+    try {
+        const session = await getSession();
+
+        if (!session || session.userId === null || session.userId === undefined) {
+            return {
+                success: false,
+                message: 'No user found',
+                error: 'Unauthorized access',
+                data: fallbackData,
+            };
+        }
+
+        const applicationsCount = await getAllApplicationsCount(session.userId);
+        const pendingApplicationsCount = await getAllPendingApplicationsCount(session.userId);
+        const approvedApplicationsCount = await getAllApprovedApplications(session.userId);
+
+        if (!applicationsCount.success) {
+            return {
+                success: false,
+                message: 'Failed to fetched applications count',
+                data: fallbackData,
+                error: 'Server side error',
+            };
+        }
+
+        if (!pendingApplicationsCount.success) {
+            return {
+                success: false,
+                message: 'Failed to fetched applications count',
+                data: fallbackData,
+                error: 'Server side error',
+            };
+        }
+
+        if (!approvedApplicationsCount.success) {
+            return {
+                success: false,
+                message: 'Failed to fetched applications count',
+                data: fallbackData,
+                error: 'Server side error',
+            };
+        }
+
+        const counts: ApplicationCounts = {
+            appliedCounts: applicationsCount.data ?? 0,
+            pendingCounts: pendingApplicationsCount.data ?? 0,
+            approvedCounts: pendingApplicationsCount.data ?? 0,
+        };
+
+        return {
+            success: true,
+            message: 'Fetched successfully!',
+            data: counts,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to fetch applications count',
+            error: 'Server error',
+            data: fallbackData,
         };
     }
 }
