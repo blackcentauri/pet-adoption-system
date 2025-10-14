@@ -1,11 +1,33 @@
+'use client';
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+    const images = [
+        
+        '/images/cat-bg.jpg',
+        '/images/cat-dog.jpg',
+        '/images/cat-dog2.jpg',
+        '/images/cat-dog3.jpg',
+        '/images/cat-dog.jpg', //eto gagalawin mo para mag add/remove ng slider doon
+    ];
+
+    const [current, setCurrent] = useState(0);
+
+    
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrent((prev) => (prev + 1) % images.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, [images.length]);
+
     return (
-        <div className="flex flex-col min-h-screen items-center bg-white font-poppins bg-[url('/images/bg1.svg')] bg-cover">
-            <nav className="w-full bg-white flex justify-between items-center px-10 py-4 shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
+        <div className="flex flex-col min-h-screen font-poppins relative">
+            <nav className="w-full bg-white flex justify-between items-center px-10 py-4 shadow-[0_2px_10px_rgba(0,0,0,0.1)] z-20">
                 <Image
                     src="/images/fur_legged_logo.png"
                     alt="Fur Legged Logo"
@@ -14,16 +36,16 @@ export default function Home() {
                     height={50}
                 />
 
-                <nav className="flex items-center gap-8 text-[1rem] font-semibold text-[#FED200]">
-                    <Link href="/" className="hover:text-gray-500 transition">
+                <nav className="flex items-center gap-8 text-[1rem] font-semibold text-[##1E293B]">
+                    <Link href="/" className="hover:text-yellow-500 transition">
                         Home
                     </Link>
-                    <a href="#" className="hover:text-gray-500 transition">
+                    <Link href="#" className="hover:text-yellow-500 transition">
                         About Us
-                    </a>
-                    <a href="#" className="hover:text-gray-500 transition">
+                    </Link>
+                    <Link href="#" className="hover:text-yellow-500 transition">
                         Contact Us
-                    </a>
+                    </Link>
                 </nav>
 
                 <div className="flex gap-5">
@@ -31,7 +53,7 @@ export default function Home() {
                         <Button
                             size={'lg'}
                             variant={'secondary'}
-                            className="bg-primary font-poppins text-white font-medium"
+                            className="bg-primary font-poppins text-white font-medium rounded-full shadow-md hover:shadow-lg hover:scale-105 transition"
                         >
                             Sign in
                         </Button>
@@ -40,7 +62,7 @@ export default function Home() {
                         <Button
                             size={'lg'}
                             variant={'ghost'}
-                            className="font-poppins font-medium"
+                            className="font-poppins font-medium rounded-full shadow-md hover:shadow-lg hover:scale-105 transition"
                         >
                             Sign up
                         </Button>
@@ -48,40 +70,92 @@ export default function Home() {
                 </div>
             </nav>
 
-            <main className="flex items-center justify-between w-full px-8 lg:px-20 py-10 max-w-7xl">
-                <div className="flex flex-col gap-4 max-w-sm">
-                    <h1 className="text-5xl font-extrabold text-[#333333] leading-tight">
-                        Welcome to <br /> your new <br /> beginning
+            <div className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden">
+                {images.map((img, index) => (
+                    <Image
+                        key={index}
+                        src={img}
+                        alt={`Slide ${index + 1}`}
+                        fill
+                        priority={index === 0}
+                        className={`object-cover absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                            index === current ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                        }`}
+                    />
+                ))}
+
+                <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/40 z-20"></div>
+
+                <div className="relative z-30 text-center text-white px-4">
+                    <h1 className="text-4xl md:text-6xl font-fredoka font-bold mb-4 leading-snug">
+                        WELCOME TO YOUR <br /> NEW BEGINNING!
                     </h1>
 
-                    <p className="text-xl font-medium text-[#5B5B5B] mt-2">
-                        Where wagging tails, gentle purrs, and unconditional
-                        love awaits.
+                    <p className="text-base md:text-lg mb-8 max-w-2xl mx-auto">
+                        WHERE WAGGING TAILS, GENTLE PURRS, AND UNCONDITIONAL LOVE AWAIT. FIND YOUR FOREVER FRIEND TODAY.
                     </p>
+
+                    <Link href="#">
+                        <Button
+                            size="lg"
+                            className="bg-[#FFC800] text-white font-fredoka text-lg px-15 py-3 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 transition"
+                        >
+                            ADOPT NOW!
+                        </Button>
+                    </Link>
                 </div>
 
-                <div className="relative flex justify-center items-center w-full lg:w-1/2 mt-10 lg:mt-0 h-[350px]">
-                    <Image
-                        src="/images/Welcome!.svg"
-                        alt="Welcome with pets and paw prints"
-                        width={350}
-                        height={350}
-                        priority
-                        className="max-w-[90%] h-auto object-contain"
-                    />
+                <div className="absolute bottom-6 flex gap-3 z-30">
+                    {images.map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setCurrent(index)}
+                            className={`w-3 h-3 rounded-full transition-all ${
+                                index === current ? 'bg-[#1E293B] scale-125' : 'bg-white opacity-70 hover:opacity-100'
+                            }`}
+                        />
+                    ))}
+                </div>
+            </div>
 
-                    <div className="absolute top-[110%] left-[50%] transform -translate-x-1/2 flex flex-col items-center">
-                        <Link href="#">
-                            <Button
-                                size="lg"
-                                className="bg-[#FEC84B] text-white font-poppins font-bold text-xl w-40 h-10 rounded-full shadow-lg hover:bg-[#EAA937]"
+            <section className="bg-white py-16 px-6 md:px-20">
+                <div className="max-w-6xl mx-auto">
+                    <h2 className="text-3xl font-fredoka font-bold text-[#1E293B] mb-2 text-left">
+                        LOOKING FOR A HOME
+                    </h2>
+                    <p className="text-gray-500 text-left mb-10 whitespace-nowrap overflow-hidden text-ellipsis">
+                        These wonderful cats and dogs are currently under our loving care—each one hoping to find their
+                        forever family.
+                    </p>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
+                        {[
+                            { name: 'THORMUND', img: '/images/dog1.jpg' },
+                            { name: 'BINGO', img: '/images/dog2.jpg' },
+                            { name: 'EZRA', img: '/images/dog3.jpg' },
+                            { name: 'LORNA', img: '/images/cat1.jpg' },
+                            { name: 'MILO', img: '/images/dog4.jpg' },
+                            { name: 'BELLA', img: '/images/dog5.jpg' },
+                            { name: 'ROCKY', img: '/images/dog6.jpg' },
+                            { name: 'LUNA', img: '/images/dog7.jpg' },
+                        ].map((pet, index) => (
+                            <div
+                                key={index}
+                                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden"
                             >
-                                Adopt Now!
-                            </Button>
-                        </Link>
+                                <Image
+                                    src={pet.img}
+                                    alt={pet.name}
+                                    width={300}
+                                    height={300}
+                                    className="w-full h-60 object-cover"
+                                />
+                                <h3 className="text-center py-4 font-semibold text-[#1E293B]">{pet.name}</h3>
+                            </div>
+                        ))}
                     </div>
                 </div>
-            </main>
+            </section>
         </div>
     );
 }
