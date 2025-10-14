@@ -65,7 +65,11 @@ export async function insertPet(formData: FormData): Promise<ActionResponse> {
             age: formData.get('age') as string,
             sex: formData.get('sex') as string,
             breed: formData.get('breed') as string,
+            birthday: formData.get('birthday') ? new Date(formData.get('birthday') as string) : null,
+            weight: Number(formData.get('weight')),
+            height: Number(formData.get('height')),
             description: formData.get('description') as string,
+            condition: formData.get('condition') as string,
         };
 
         const validateResult = CreatePetSchema.safeParse(data);
@@ -84,7 +88,11 @@ export async function insertPet(formData: FormData): Promise<ActionResponse> {
             age: data.age,
             sex: data.sex,
             breed: data.breed,
+            birthday: data.birthday,
+            weight: data.weight,
+            height: data.height,
             description: data.description,
+            condition: data.condition,
         });
 
         if (!pet.success) {
