@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import UpdatePet from '@/components/UpdatePet';
 import { deletePet, getFosterPets } from '@/server/pets';
 import { useQuery } from '@tanstack/react-query';
 import { ListFilter } from 'lucide-react';
@@ -109,9 +110,7 @@ export default function PetPage() {
                             </ul>
                         </CardContent>
                         <CardFooter className="grid grid-rows-2 gap-3">
-                            <Button variant={'default'} className="font-semibold">
-                                Update
-                            </Button>
+                            <UpdatePet {...pet} />
                             <Button
                                 variant={'outline'}
                                 onClick={() => {

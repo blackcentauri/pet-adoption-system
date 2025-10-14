@@ -2,9 +2,10 @@
 import { createAdoptedPet, createPet, getAllAvailablePets, getAllFosterPets } from '@/model/pet';
 import { ActionResponse } from './response';
 import { getSession } from '@/lib/session';
-import { pets } from '@/app/generated/prisma';
-import { CreatePetSchema } from '@/lib/pets';
-import { deletePet as removePet } from '@/model/pet';
+import { pet_status, pets } from '@/app/generated/prisma';
+import { CreatePetSchema, UpdatePetSchema } from '@/lib/pets';
+import { deletePet as removePet, updatePet as updateModelPet } from '@/model/pet';
+import { getCurrentAdmin } from './admin';
 
 export async function getFosterPets(): Promise<ActionResponse<pets[]>> {
     try {
@@ -195,6 +196,84 @@ export async function deletePet(petId: number): Promise<ActionResponse> {
         return {
             success: false,
             message: 'Failed to delete pet',
+            error: 'Server error',
+        };
+    }
+}
+
+export async function updatePet(formData: FormData): Promise<ActionResponse> {
+    try {
+        const data = {
+            id: Number(formData.get('id')),
+            name: formData.get('name') as string,
+            species: formData.get('species') as string,
+            age: formData.get('age') as string,
+            sex: formData.get('sex') as string,
+            breed: formData.get('breed') as string,
+            birthday: formData.get('birthday') ? new Date(formData.get('birthday') as string) : null,
+            weight: Number(formData.get('weight')),
+            height: Number(formData.get('height')),
+            status: formData.get('status') as string,
+            description: formData.get('description') as string,
+            condition: formData.get('condition') as string,
+        };
+
+        const adminId = await getCurrentAdmin();
+
+        if (!adminId.success || adminId.data === null || adminId.data === undefined) {
+            return {
+                success: false,
+                message: 'No admin found',
+                error: 'Unauthorized access',
+            };
+        }
+
+        const validateResult = UpdatePetSchema.safeParse(data);
+
+        if (!validateResult.success) {
+            return {
+                success: false,
+                message: 'Validation failed',
+                error: `${validateResult.error.flatten().formErrors}`,
+            };
+        }
+
+        const parseData: pets = {
+            pet_id: data.id,
+            pet_name: data.name,
+            pet_species: data.species,
+            pet_age: data.age,
+            pet_sex: data.sex,
+            pet_breed: data.breed,
+            pet_birthday: data.birthday,
+            pet_weight: data.weight,
+            pet_height: data.height,
+            pet_status: data.status as pet_status,
+            pet_description: data.description,
+            pet_condition: data.condition,
+            pet_image: null,
+            admin_id: adminId.data.userId,
+        };
+
+        const pet = await updateModelPet(parseData);
+
+        if (!pet.success) {
+            return {
+                success: false,
+                message: 'Failed to insert pet',
+                error: 'Server error',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Created Successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to insert pet. An error occured',
             error: 'Server error',
         };
     }
