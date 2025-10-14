@@ -29,8 +29,8 @@ model pets {
   pet_sex         String         @db.VarChar(255)
   admin_id        Int?
   pet_condition   String?        @db.VarChar(255)
-  pet_weight      Int?
-  pet_height      Int?
+  pet_weight      Int
+  pet_height      Int
   pet_birthday    DateTime?      @db.Timestamp(6)
   adopted_pets    adopted_pets[]
   applications    applications[]

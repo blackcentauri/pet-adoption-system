@@ -222,3 +222,46 @@ export async function deletePet(petId: number): Promise<ModelResponse> {
         };
     }
 }
+
+export async function updatePet(data: pets): Promise<ModelResponse> {
+    try {
+        const pet = await prisma.pets.update({
+            where: {
+                pet_id: data.pet_id,
+            },
+            data: {
+                pet_name: data.pet_name,
+                pet_species: data.pet_species,
+                pet_age: data.pet_age,
+                pet_sex: data.pet_sex,
+                pet_breed: data.pet_breed,
+                pet_birthday: data.pet_birthday,
+                pet_weight: data.pet_weight,
+                pet_height: data.pet_height,
+                pet_status: data.pet_status,
+                pet_description: data.pet_description,
+                pet_condition: data.pet_condition,
+                pet_image: data.pet_image
+            },
+        });
+
+        if (!pet) {
+            return {
+                success: false,
+                message: 'Failed to update pet',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Pet updated successfully!',
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to update pet',
+            error: 'Database error',
+        };
+    }
+}
