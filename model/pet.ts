@@ -62,11 +62,25 @@ type PetsProps = {
     age: string;
     sex: string;
     breed: string;
-
+    birthday: Date | null;
+    weight: number;
+    height: number;
     description: string;
+    condition: string;
 };
 
-export async function createPet({ name, species, age, sex, breed, description }: PetsProps): Promise<ModelResponse> {
+export async function createPet({
+    name,
+    species,
+    age,
+    sex,
+    breed,
+    birthday,
+    weight,
+    height,
+    description,
+    condition,
+}: PetsProps): Promise<ModelResponse> {
     try {
         const user_id = await getSession();
 
@@ -85,7 +99,11 @@ export async function createPet({ name, species, age, sex, breed, description }:
                 pet_age: age,
                 pet_sex: sex,
                 pet_breed: breed,
+                pet_birthday: birthday,
+                pet_weight: weight,
+                pet_height: height,
                 pet_description: description,
+                pet_condition: condition,
                 admin_id: user_id.userId,
             },
         });
