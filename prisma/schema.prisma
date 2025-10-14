@@ -28,9 +28,13 @@ model pets {
   pet_breed       String         @db.VarChar(255)
   pet_sex         String         @db.VarChar(255)
   admin_id        Int?
-  admins          admins?        @relation(fields: [admin_id], references: [admin_id], onDelete: NoAction, onUpdate: NoAction)
-  applications    applications[]
+  pet_condition   String?        @db.VarChar(255)
+  pet_weight      Int?
+  pet_height      Int?
+  pet_birthday    DateTime?      @db.Timestamp(6)
   adopted_pets    adopted_pets[]
+  applications    applications[]
+  admins          admins?        @relation(fields: [admin_id], references: [admin_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model users {
@@ -54,8 +58,8 @@ model applications {
   pet_id             Int
   admin_id           Int
   user_id            Int
-  pets               pets                @relation(fields: [pet_id], references: [pet_id], onDelete: Cascade, onUpdate: NoAction)
   admins             admins              @relation(fields: [admin_id], references: [admin_id], onDelete: NoAction, onUpdate: NoAction)
+  pets               pets                @relation(fields: [pet_id], references: [pet_id], onDelete: Cascade, onUpdate: NoAction)
   users              users               @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -67,8 +71,8 @@ model admins {
   password     String         @db.VarChar(255)
   role         user_role?
   created_at   DateTime?      @db.Timestamp(6)
-  pets         pets[]
   applications applications[]
+  pets         pets[]
 }
 
 enum pet_status {
