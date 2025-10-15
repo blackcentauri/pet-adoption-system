@@ -1,36 +1,26 @@
+import { Dog, Home, MessageCircleMore, PawPrint } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Input } from './ui/input';
 
 export default function UserNavigation() {
     return (
         <nav className="w-full bg-white flex justify-between items-center px-10 py-4 shadow-[0_2px_10px_rgba(0,0,0,0.1)] sticky top-0">
             <div className="flex items-center gap-2">
-                <Image
-                    src="/images/fur_legged_logo.png"
-                    alt="Fur Legged Logo"
-                    width={48}
-                    height={48}
-                    className="w-12 h-12"
-                />
+                <Input type="search" placeholder="Search by:" />
             </div>
             <nav className="flex items-center gap-8 text-[1rem] font-semibold text-[#FED200]">
-                <Link
-                    href="/dashboard/user"
-                    className="hover:text-gray-500 transition"
-                >
-                    Home
+                <Link href="/dashboard/user" className="hover:text-gray-500 transition">
+                    <Home className="size-8" />
                 </Link>
-                <Link
-                    href="/dashboard/user/about-us"
-                    className="hover:text-gray-500 transition"
-                >
-                    About Us
+                <Link href="/dashboard/user/applications" className="hover:text-gray-500 transition">
+                    <PawPrint className="size-8" />
                 </Link>
-                <Link
-                    href="/dashboard/user/contact-us"
-                    className="hover:text-gray-500 transition"
-                >
-                    Contact Us
+                <Link href="/dashboard/user/report" className="hover:text-gray-500 transition">
+                    <MessageCircleMore className="size-8" />
+                </Link>
+                <Link href={'/dashboard/user/adopted'} className="hover:text-gray-500 transition">
+                    <Dog className="size-8" />
                 </Link>
             </nav>
             <div>
