@@ -2,7 +2,6 @@
 import PetDialog from '@/components/Modal';
 import { getAllPets } from '@/server/pets';
 import { useQuery } from '@tanstack/react-query';
-import Image from 'next/image';
 
 export default function AvailablePetsPage() {
     const { data } = useQuery({
@@ -57,6 +56,10 @@ export default function AvailablePetsPage() {
                                       pet_breed={pet.pet_breed}
                                       pet_sex={pet.pet_sex}
                                       admin_id={pet.admin_id}
+                                      pet_condition={pet.pet_condition}
+                                      pet_weight={pet.pet_weight}
+                                      pet_height={pet.pet_height}
+                                      pet_birthday={pet.pet_birthday}
                                   />
                               </div>
                           </div>

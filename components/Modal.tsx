@@ -11,15 +11,16 @@ import {
 } from './ui/dialog';
 import { pets } from '@/app/generated/prisma';
 import { Button } from './ui/button';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { createUserApplication } from '@/server/user';
 import { toast } from 'sonner';
 import { Loader2Icon } from 'lucide-react';
 
 export default function PetDialog(data: pets) {
+    const [open, setOpen] = useState(false);
     const [pending, startTransition] = useTransition();
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={() => setOpen(true)}>
             <DialogTrigger className="bg-[#FED200] hover:bg-[#e3ba00] text-white font-semibold my-4 px-15 py-2 rounded-full shadow-md transition-all">
                 Adopt
             </DialogTrigger>
@@ -61,6 +62,7 @@ export default function PetDialog(data: pets) {
 
                                     if (application.success) {
                                         toast('Thank you for applying! We will update you soon.');
+                                        setOpen(false);
                                     }
                                 });
                             }}
