@@ -209,7 +209,7 @@ export async function fetchAllApplicationsCount(): Promise<ActionResponse<Applic
         const counts: ApplicationCounts = {
             appliedCounts: applicationsCount.data ?? 0,
             pendingCounts: pendingApplicationsCount.data ?? 0,
-            approvedCounts: pendingApplicationsCount.data ?? 0,
+            approvedCounts: approvedApplicationsCount.data ?? 0,
         };
 
         return {
