@@ -24,7 +24,7 @@ model pets {
   pet_species     String         @db.VarChar(255)
   pet_status      pet_status?    @default(not_adopted)
   pet_description String         @db.VarChar(255)
-  pet_image       String?        @db.VarChar(255)
+  pet_image       String         @db.VarChar(255)
   pet_breed       String         @db.VarChar(255)
   pet_sex         String         @db.VarChar(255)
   admin_id        Int?

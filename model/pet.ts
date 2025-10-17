@@ -59,6 +59,7 @@ export async function getAllFosterPets(adminId: number): Promise<ModelResponse<p
 type PetsProps = {
     name: string;
     species: string;
+    image: string;
     age: string;
     sex: string;
     breed: string;
@@ -72,6 +73,7 @@ type PetsProps = {
 export async function createPet({
     name,
     species,
+    image,
     age,
     sex,
     breed,
@@ -96,6 +98,7 @@ export async function createPet({
             data: {
                 pet_name: name,
                 pet_species: species,
+                pet_image: image,
                 pet_age: age,
                 pet_sex: sex,
                 pet_breed: breed,

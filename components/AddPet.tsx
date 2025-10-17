@@ -84,11 +84,7 @@ export default function AddPet() {
                 </DialogHeader>
 
                 <Form className="grid gap-2" action={handleSubmit}>
-                    {/* <FormGroup className="grid gap-2">
-                        <FormLabel>Pet image</FormLabel>
-                        <Input type="file" id="image" name="image" accept="/images" />
-                    </FormGroup> */}
-                    <FormGroup className="grid grid-cols-2 gap-3">
+                    <FormGroup className="grid grid-cols-3 gap-3">
                         <FormGroup className="grid gap-2">
                             <FormLabel>Pet name</FormLabel>
                             <Input id="name" name="name" type="text" placeholder="Pet name" required />
@@ -96,6 +92,10 @@ export default function AddPet() {
                         <FormGroup className="grid gap-2">
                             <FormLabel>Species</FormLabel>
                             <Input id="species" name="species" type="text" placeholder="Species" required />
+                        </FormGroup>
+                        <FormGroup className="grid gap-2">
+                            <FormLabel>Pet image</FormLabel>
+                            <Input id="image" name="image" type="file" accept="/images" placeholder="Image" required />
                         </FormGroup>
                     </FormGroup>
                     <FormGroup className="grid grid-cols-2 gap-3">

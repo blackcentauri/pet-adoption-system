@@ -6,6 +6,8 @@ import { pet_status, pets } from '@/app/generated/prisma';
 import { CreatePetSchema, UpdatePetSchema } from '@/lib/pets';
 import { deletePet as removePet, updatePet as updateModelPet } from '@/model/pet';
 import { getCurrentAdmin } from './admin';
+import fs from 'fs';
+import path from 'path';
 
 export async function getFosterPets(): Promise<ActionResponse<pets[]>> {
     try {
@@ -60,9 +62,11 @@ export async function geAvailablePets(): Promise<ActionResponse<pets[]>> {
 
 export async function insertPet(formData: FormData): Promise<ActionResponse> {
     try {
+        const imageFile = formData.get('image') as File | null;
         const data = {
             name: formData.get('name') as string,
             species: formData.get('species') as string,
+            image: imageFile ?? null,
             age: formData.get('age') as string,
             sex: formData.get('sex') as string,
             breed: formData.get('breed') as string,
@@ -83,10 +87,31 @@ export async function insertPet(formData: FormData): Promise<ActionResponse> {
             };
         }
 
+        if (!imageFile) {
+            return {
+                success: false,
+                message: 'Image is required',
+                error: 'No image found',
+            };
+        }
+
+        const bytes = await imageFile.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+
+        // Upload image to file system more like cloud
+        const uploadDirectory = '/uploads/';
+        if (!fs.existsSync(uploadDirectory)) fs.mkdirSync(uploadDirectory, { recursive: true });
+
+        const filePath = path.join(uploadDirectory, imageFile.name);
+        fs.writeFileSync(filePath, buffer);
+
+        const imageURL = filePath;
+
         const pet = await createPet({
             name: data.name,
             species: data.species,
             age: data.age,
+            image: imageURL,
             sex: data.sex,
             breed: data.breed,
             birthday: data.birthday,
@@ -203,10 +228,12 @@ export async function deletePet(petId: number): Promise<ActionResponse> {
 
 export async function updatePet(formData: FormData): Promise<ActionResponse> {
     try {
+        const imageFile = formData.get('image') as File | null;
         const data = {
             id: Number(formData.get('id')),
             name: formData.get('name') as string,
             species: formData.get('species') as string,
+            image: imageFile,
             age: formData.get('age') as string,
             sex: formData.get('sex') as string,
             breed: formData.get('breed') as string,
@@ -238,6 +265,25 @@ export async function updatePet(formData: FormData): Promise<ActionResponse> {
             };
         }
 
+        if (!imageFile) {
+            return {
+                success: false,
+                message: 'Image is required',
+                error: 'No image found',
+            };
+        }
+
+        const bytes = await imageFile.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+
+        const uploadDirectory = path.join(process.cwd(), 'public', 'uploads');
+        if (!fs.existsSync(uploadDirectory)) fs.mkdirSync(uploadDirectory, { recursive: true });
+
+        const filePath = path.join(uploadDirectory, imageFile.name);
+        fs.writeFileSync(filePath, buffer);
+
+        const imageURL = filePath;
+
         const parseData: pets = {
             pet_id: data.id,
             pet_name: data.name,
@@ -251,7 +297,7 @@ export async function updatePet(formData: FormData): Promise<ActionResponse> {
             pet_status: data.status as pet_status,
             pet_description: data.description,
             pet_condition: data.condition,
-            pet_image: null,
+            pet_image: imageURL,
             admin_id: adminId.data.userId,
         };
 
