@@ -95,7 +95,7 @@ export default function AddPet() {
                         </FormGroup>
                         <FormGroup className="grid gap-2">
                             <FormLabel>Pet image</FormLabel>
-                            <Input id="image" name="image" type="file" accept="/images" placeholder="Image" required />
+                            <Input id="image" name="image" type="file" accept="image/*" placeholder="Image" required />
                         </FormGroup>
                     </FormGroup>
                     <FormGroup className="grid grid-cols-2 gap-3">
@@ -128,7 +128,7 @@ export default function AddPet() {
                     </FormGroup>
                     <FormGroup className="grid grid-cols-2 gap-2">
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Weight</FormLabel>
+                            <FormLabel>Weight(kg)</FormLabel>
                             <Input
                                 id="weight"
                                 name="weight"
@@ -140,7 +140,7 @@ export default function AddPet() {
                             />
                         </FormGroup>
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Height</FormLabel>
+                            <FormLabel>Height inches</FormLabel>
                             <Input
                                 id="height"
                                 name="height"
