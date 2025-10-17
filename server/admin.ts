@@ -6,7 +6,7 @@ import {
     getAllApplications,
     getAllApplicationsCount,
     getAllApprovedApplications,
-    getAllPendingApplicationsCount,
+    getAllRejectedApplicationsCount,
     updateApplicationStatus,
 } from '@/model/admin';
 import { logOutSession } from '@/lib/auth';
@@ -153,14 +153,14 @@ export async function deleteCurrentSession(): Promise<ActionResponse> {
 
 type ApplicationCounts = {
     appliedCounts: number;
-    pendingCounts: number;
+    rejectedCounts: number;
     approvedCounts: number;
 };
 
 export async function fetchAllApplicationsCount(): Promise<ActionResponse<ApplicationCounts>> {
     const fallbackData: ApplicationCounts = {
         appliedCounts: 0,
-        pendingCounts: 0,
+        rejectedCounts: 0,
         approvedCounts: 0,
     };
     try {
@@ -176,7 +176,7 @@ export async function fetchAllApplicationsCount(): Promise<ActionResponse<Applic
         }
 
         const applicationsCount = await getAllApplicationsCount(session.userId);
-        const pendingApplicationsCount = await getAllPendingApplicationsCount(session.userId);
+        const rejectedCount = await getAllRejectedApplicationsCount(session.userId);
         const approvedApplicationsCount = await getAllApprovedApplications(session.userId);
 
         if (!applicationsCount.success) {
@@ -188,7 +188,7 @@ export async function fetchAllApplicationsCount(): Promise<ActionResponse<Applic
             };
         }
 
-        if (!pendingApplicationsCount.success) {
+        if (!rejectedCount.success) {
             return {
                 success: false,
                 message: 'Failed to fetched applications count',
@@ -208,7 +208,7 @@ export async function fetchAllApplicationsCount(): Promise<ActionResponse<Applic
 
         const counts: ApplicationCounts = {
             appliedCounts: applicationsCount.data ?? 0,
-            pendingCounts: pendingApplicationsCount.data ?? 0,
+            rejectedCounts: rejectedCount.data ?? 0,
             approvedCounts: approvedApplicationsCount.data ?? 0,
         };
 
