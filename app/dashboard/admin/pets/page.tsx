@@ -90,7 +90,7 @@ export default function PetPage() {
                     <AddPet />
                 </div>
             </nav>
-            <section className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 place-content-center">
+            <section className="grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-2 place-content-center">
                 <PetContext.Provider value={{ pets, setPets, open, setOpen }}>
                     {pets.map((pet) => (
                         <Card key={pet.pet_id} className="cursor-pointer">

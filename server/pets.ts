@@ -98,14 +98,25 @@ export async function insertPet(formData: FormData): Promise<ActionResponse> {
         const bytes = await imageFile.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Upload image to file system more like cloud
-        const uploadDirectory = '/uploads/';
+        // choose upload dir (env override) or default to public/pets so Next can serve it
+        const uploadDirectory = process.env.PET_UPLOAD_DIR
+            ? path.resolve(process.env.PET_UPLOAD_DIR)
+            : path.join(process.cwd(), 'public', 'pets');
         if (!fs.existsSync(uploadDirectory)) fs.mkdirSync(uploadDirectory, { recursive: true });
 
-        const filePath = path.join(uploadDirectory, imageFile.name);
+        // safe unique filename
+        const ext = path.extname(imageFile.name);
+        const base = path
+            .basename(imageFile.name, ext)
+            .replace(/[^a-z0-9-_]/gi, '_')
+            .toLowerCase();
+        const filename = `${base}-${Date.now()}${ext}`;
+        const filePath = path.join(uploadDirectory, filename);
+
         fs.writeFileSync(filePath, buffer);
 
-        const imageURL = filePath;
+        // use a public URL when saved inside public/
+        const imageURL = uploadDirectory.includes(path.join('public')) ? `/pets/${filename}` : filePath;
 
         const pet = await createPet({
             name: data.name,
