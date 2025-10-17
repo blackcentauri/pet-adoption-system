@@ -280,12 +280,12 @@ export async function getAllApplicationsCount(adminId: number): Promise<ModelRes
     }
 }
 
-export async function getAllPendingApplicationsCount(adminId: number): Promise<ModelResponse<number>> {
+export async function getAllRejectedApplicationsCount(adminId: number): Promise<ModelResponse<number>> {
     try {
         const pendingApplications = await prisma.applications.count({
             where: {
                 admin_id: adminId,
-                application_status: 'pending',
+                application_status: 'rejected',
             },
         });
 

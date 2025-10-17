@@ -43,9 +43,9 @@ export default function AdminSectionCards() {
             ) : (
                 <Card>
                     <CardHeader>
-                        <CardDescription>Pending</CardDescription>
+                        <CardDescription>Rejected</CardDescription>
                         <CardTitle className="text-3xl font-semibold tabular-nums">
-                            {data?.pendingCounts ?? 0}
+                            {data?.rejectedCounts ?? 0}
                         </CardTitle>
                         <CardAction>
                             <Badge variant={'outline'}>
@@ -55,9 +55,9 @@ export default function AdminSectionCards() {
                     </CardHeader>
                     <CardFooter className="flex-col items-start gap-1.5 text-sm">
                         <div className="line-clamp-1 flex gap-2 font-medium">
-                            Pendings <TrendingUp className="size-4" />
+                            Rejected <TrendingUp className="size-4" />
                         </div>
-                        <div className="text-muted-foreground">Number of pending applications this day</div>
+                        <div className="text-muted-foreground">Number of rejected applications this day</div>
                     </CardFooter>
                 </Card>
             )}

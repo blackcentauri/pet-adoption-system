@@ -28,26 +28,31 @@ model pets {
   pet_breed       String         @db.VarChar(255)
   pet_sex         String         @db.VarChar(255)
   admin_id        Int?
-  pet_condition   String?        @db.VarChar(255)
-  pet_weight      Int
-  pet_height      Int
   pet_birthday    DateTime?      @db.Timestamp(6)
+  pet_condition   String?        @db.VarChar(255)
+  pet_height      Int
+  pet_weight      Int
   adopted_pets    adopted_pets[]
   applications    applications[]
   admins          admins?        @relation(fields: [admin_id], references: [admin_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model users {
-  user_id      Int            @id @default(autoincrement())
-  first_name   String?        @db.VarChar(255)
-  last_name    String?        @db.VarChar(255)
-  username     String         @unique(map: "unique_username") @db.VarChar(255)
-  email        String         @unique(map: "email") @db.VarChar(255)
-  password     String         @db.VarChar(255)
-  role         user_role?     @default(user)
-  created_at   DateTime?      @db.Timestamp(6)
-  adopted_pets adopted_pets[]
-  applications applications[]
+  user_id        Int            @id @default(autoincrement())
+  first_name     String?        @db.VarChar(255)
+  last_name      String?        @db.VarChar(255)
+  username       String         @unique(map: "unique_username") @db.VarChar(255)
+  email          String         @unique(map: "email") @db.VarChar(255)
+  password       String         @db.VarChar(255)
+  role           user_role?     @default(user)
+  created_at     DateTime?      @db.Timestamp(6)
+  contact_number String?        @db.VarChar(255)
+  address        String?        @db.VarChar(255)
+  birthday       DateTime?      @db.Timestamp(6)
+  age            Int?
+  valid_id       String?        @db.VarChar(255)
+  adopted_pets   adopted_pets[]
+  applications   applications[]
 }
 
 model applications {
@@ -88,6 +93,6 @@ enum user_role {
 
 enum application_status {
   applied  @map("applied")
-  pending
+  rejected
   approved
 }
