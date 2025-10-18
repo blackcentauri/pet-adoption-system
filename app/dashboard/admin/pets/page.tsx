@@ -2,13 +2,12 @@
 import { pets } from '@/app/generated/prisma';
 import AddPet from '@/components/AddPet';
 import AdminViewPets from '@/components/AdminViewPets';
-import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getFosterPets } from '@/server/pets';
 import { useQuery } from '@tanstack/react-query';
-import { ListFilter } from 'lucide-react';
+import { ListFilter, PawPrint } from 'lucide-react';
 import Image from 'next/image';
 import { useState, createContext } from 'react';
 
@@ -63,6 +62,16 @@ export default function PetPage() {
         );
         setPets(value === 'asc' ? sortedPets : sortedPets.reverse());
     };
+
+    const handleSpeciesSort = (value: string) => {
+        if (!value || value === 'all') {
+            setPets(allPets);
+            return;
+        }
+
+        const filtered = allPets.filter((p) => p.pet_species?.toLowerCase() === value.toLowerCase());
+        setPets(filtered);
+    };
     useQuery({
         queryKey: ['pets'],
         queryFn: queryPets,
@@ -71,7 +80,7 @@ export default function PetPage() {
         <div className="grid grid-rows-[80px_1fr] gap-4">
             <nav className="flex justify-between items-center">
                 <h1 className="font-poppins font-semibold text-4xl">Pet Listings</h1>
-                <div className="grid grid-cols-3 justify-between gap-3">
+                <div className="grid grid-cols-4 justify-between gap-3">
                     <div className="flex gap-2 items-center">
                         <ListFilter />
                         <Select name="sort" onValueChange={handleSort}>
@@ -84,32 +93,50 @@ export default function PetPage() {
                             </SelectContent>
                         </Select>
                     </div>
+                    <div className="flex gap-2 items-center">
+                        <PawPrint />
+                        <Select name="sort" onValueChange={handleSpeciesSort}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Filter by" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="dog">Dog</SelectItem>
+                                <SelectItem value="cat">Cat</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
 
                     <Input type="text" placeholder="Search" value={search} onChange={handleSearch} />
 
                     <AddPet />
                 </div>
             </nav>
-            <section className="grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-2 place-content-center">
+            <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-items-center max-w-6xl w-full mb-20">
                 <PetContext.Provider value={{ pets, setPets, open, setOpen }}>
                     {pets.map((pet) => (
-                        <Card key={pet.pet_id} className="cursor-pointer">
-                            <Image
-                                src={pet.pet_image}
-                                alt={pet.pet_name}
-                                width={250}
-                                height={250}
-                                className="rounded-2xl -mt-6 w-full"
-                            />
-                            <CardHeader className="text-center">
-                                <CardTitle>{pet.pet_name}</CardTitle>
-                                <CardDescription>{pet.pet_species}</CardDescription>
-                            </CardHeader>
+                        <div
+                            key={pet.pet_id}
+                            className="bg-white rounded-2xl shadow-lg overflow-hidden w-64 transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                        >
+                            <div className="relative w-full h-56">
+                                <Image src={pet.pet_image} alt={pet.pet_name} fill className="object-cover" />
+                            </div>
+                            <div className="p-5 text-center">
+                                <CardHeader className="text-center">
+                                    <CardTitle className="font-bold text-[#F7B500] text-lg mb-1 font-poppins">
+                                        {pet.pet_name}
+                                    </CardTitle>
+                                    <CardDescription className="uppercase text-sm text-gray-500 font-poppins">
+                                        {pet.pet_species}
+                                    </CardDescription>
+                                </CardHeader>
 
-                            <CardFooter>
-                                <AdminViewPets {...pet} />
-                            </CardFooter>
-                        </Card>
+                                <CardFooter>
+                                    <AdminViewPets {...pet} />
+                                </CardFooter>
+                            </div>
+                        </div>
                     ))}
                 </PetContext.Provider>
             </section>

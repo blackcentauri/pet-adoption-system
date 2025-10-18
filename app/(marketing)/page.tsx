@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 
 export default function Home() {
     const images = [
-        
         '/images/cat-bg.jpg',
         '/images/cat-dog.jpg',
         '/images/cat-dog2.jpg',
@@ -17,7 +16,6 @@ export default function Home() {
 
     const [current, setCurrent] = useState(0);
 
-    
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrent((prev) => (prev + 1) % images.length);
@@ -35,18 +33,6 @@ export default function Home() {
                     width={50}
                     height={50}
                 />
-
-                <nav className="flex items-center gap-8 text-[1rem] font-semibold text-[##1E293B]">
-                    <Link href="/" className="hover:text-yellow-500 transition">
-                        Home
-                    </Link>
-                    <Link href="#" className="hover:text-yellow-500 transition">
-                        About Us
-                    </Link>
-                    <Link href="#" className="hover:text-yellow-500 transition">
-                        Contact Us
-                    </Link>
-                </nav>
 
                 <div className="flex gap-5">
                     <Link href={'/user/signin'}>
@@ -117,45 +103,73 @@ export default function Home() {
                     ))}
                 </div>
             </div>
-
-            <section className="bg-white py-16 px-6 md:px-20">
-                <div className="max-w-6xl mx-auto">
-                    <h2 className="text-3xl font-fredoka font-bold text-[#1E293B] mb-2 text-left">
-                        LOOKING FOR A HOME
-                    </h2>
-                    <p className="text-gray-500 text-left mb-10 whitespace-nowrap overflow-hidden text-ellipsis">
-                        These wonderful cats and dogs are currently under our loving care—each one hoping to find their
-                        forever family.
+            <div className="min-h-screen bg-[#FFF9D9] overflow-y-auto py-10 px-6">
+                <section className="bg-white rounded-2xl shadow-md p-10 mb-10 text-center max-w-5xl mx-auto">
+                    <h2 className="text-[#FFC800] text-3xl font-bold font-fredoka mb-4">About Us</h2>
+                    <p className="text-[#8B5E00] text-base leading-relaxed font-poppins">
+                        Welcome to Fur-Legged, the place where compassion meets commitment. We are more than just an
+                        adoption center. We are a dedicated non-profit organization focused on being a bridge to a
+                        better life for animals in need and the families who are waiting to open their hearts.
                     </p>
+                    <p className="text-[#8B5E00] text-base leading-relaxed mt-4 font-poppins">
+                        Our journey is rooted in the simple yet profound belief that every companion deserves a loving,
+                        forever home, and that the bond we share with our pets makes us better people.
+                    </p>
+                </section>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
-                        {[
-                            { name: 'THORMUND', img: '/images/dog1.jpg' },
-                            { name: 'BINGO', img: '/images/dog2.jpg' },
-                            { name: 'EZRA', img: '/images/dog3.jpg' },
-                            { name: 'LORNA', img: '/images/cat1.jpg' },
-                            { name: 'MILO', img: '/images/dog4.jpg' },
-                            { name: 'BELLA', img: '/images/dog5.jpg' },
-                            { name: 'ROCKY', img: '/images/dog6.jpg' },
-                            { name: 'LUNA', img: '/images/dog7.jpg' },
-                        ].map((pet, index) => (
-                            <div
-                                key={index}
-                                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden"
+                <section className="bg-white rounded-2xl shadow-md p-10 mb-10 text-center max-w-5xl mx-auto">
+                    <h2 className="text-[#FFC800] text-3xl font-bold font-fredoka mb-8">Our Values</h2>
+                    <div className="flex flex-wrap justify-center gap-6">
+                        {['Compassion', 'Commitment', 'Integrity', 'Community'].map((value) => (
+                            <button
+                                key={value}
+                                className="bg-[#FFC800] text-white font-bold py-3 px-15 rounded-full shadow-md hover:shadow-lg transition"
                             >
-                                <Image
-                                    src={pet.img}
-                                    alt={pet.name}
-                                    width={300}
-                                    height={300}
-                                    className="w-full h-60 object-cover"
-                                />
-                                <h3 className="text-center py-4 font-semibold text-[#1E293B]">{pet.name}</h3>
+                                {value}
+                            </button>
+                        ))}
+                    </div>
+                </section>
+
+                <section className="bg-white rounded-2xl shadow-md p-10 max-w-5xl mx-auto">
+                    <h2 className="text-[#FFC800] text-3xl font-bold font-fredoka mb-8 text-center">Our Commitment</h2>
+                    <div className="space-y-10">
+                        {[
+                            {
+                                title: 'Saving Lives',
+                                text: 'Every pet in our care receives complete medical attention. We ensure every animal is healthy, vaccinated, and spayed/neutered before adoption.',
+                                img: '/images/saving_lives.jpg',
+                            },
+                            {
+                                title: 'Creating Bonds',
+                                text: 'Our thoughtful adoption process ensures a wonderful, lifelong connection between the pet and their new family.',
+                                img: '/images/creating_bonds.jpg',
+                            },
+                            {
+                                title: 'Continuous Improvement',
+                                text: 'We hold ourselves to the highest standards of animal welfare and ethical practice. Your adoption supports an organization dedicated to continuous improvement in saving and rehoming pets.',
+                                img: '/images/continious_improvement.jpg',
+                            },
+                        ].map((item, index) => (
+                            <div key={index} className="flex flex-col md:flex-row items-center md:items-start gap-8">
+                                <div className="flex-shrink-0">
+                                    <img
+                                        src={item.img}
+                                        alt={item.title}
+                                        className="w-[200px] h-[150px] object-cover rounded-xl shadow-md"
+                                    />
+                                </div>
+                                <div className="text-center md:text-left">
+                                    <h3 className="text-[#FFC800] text-xl font-semibold font-poppins mb-2">
+                                        {item.title}
+                                    </h3>
+                                    <p className="text-[#8B5E00] text-base font-poppins">{item.text}</p>
+                                </div>
                             </div>
                         ))}
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </div>
     );
 }

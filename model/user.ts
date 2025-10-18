@@ -181,3 +181,115 @@ export async function inserUserApplication({
         };
     }
 }
+
+export async function queryUserValidId(userId: number): Promise<ModelResponse<string>> {
+    try {
+        const userValidId = await prisma.users.findUnique({
+            where: {
+                user_id: userId,
+            },
+        });
+
+        if (!userValidId?.valid_id || userValidId.valid_id === null || userValidId.valid_id === undefined) {
+            return {
+                success: false,
+                message: 'No valid ID',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Query successful',
+            data: userValidId.valid_id,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'An error occured',
+            error: 'Database error',
+        };
+    }
+}
+
+type UserInfo = {
+    userID: number;
+    validID: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    email: string;
+    contact: string;
+    address: string;
+    birthday: Date | null;
+};
+
+export async function updateUserInfo(data: UserInfo): Promise<ModelResponse> {
+    try {
+        const user = await prisma.users.update({
+            where: {
+                user_id: data.userID,
+            },
+            data: {
+                valid_id: data.validID,
+                first_name: data.firstName,
+                last_name: data.lastName,
+                username: data.username,
+                email: data.email,
+                contact_number: data.contact,
+                address: data.address,
+                birthday: data.birthday,
+            },
+        });
+
+        if (!user) {
+            return {
+                success: false,
+                message: 'Failed to update user data',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful update',
+        };
+    } catch (error) {
+        console.error('An error occured', error);
+        return {
+            success: false,
+            message: 'Failed to query',
+            error: 'Database error',
+        };
+    }
+}
+
+// Query user info fromm database
+export async function queryUserInfo(userId: number): Promise<ModelResponse<users>> {
+    try {
+        const userInfo = await prisma.users.findUnique({
+            where: {
+                user_id: userId,
+            },
+        });
+
+        if (!userInfo || userInfo === undefined) {
+            return {
+                success: false,
+                message: 'User info does not exists',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful query!',
+            data: userInfo,
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+            message: 'An error occured while querying user email',
+            error: `${error}`,
+        };
+    }
+}

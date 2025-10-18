@@ -1,6 +1,7 @@
-import { pet_status, pets, PrismaClient } from '@/app/generated/prisma';
+import { adopted_pets, applications, pet_status, pets, PrismaClient, users } from '@/app/generated/prisma';
 import { ModelResponse } from './response';
 import { getSession } from '@/lib/session';
+import { ApplicationsProps } from './admin';
 const prisma = new PrismaClient();
 
 // Get all not adopted pets
@@ -244,7 +245,7 @@ export async function updatePet(data: pets): Promise<ModelResponse> {
                 pet_status: data.pet_status,
                 pet_description: data.pet_description,
                 pet_condition: data.pet_condition,
-                pet_image: data.pet_image
+                pet_image: data.pet_image,
             },
         });
 
@@ -264,6 +265,198 @@ export async function updatePet(data: pets): Promise<ModelResponse> {
         return {
             success: false,
             message: 'Failed to update pet',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function getAllUserPetApplications(userId: number): Promise<ModelResponse<ApplicationsProps[]>> {
+    try {
+        const userApplications = await prisma.applications.findMany({
+            where: {
+                user_id: userId,
+            },
+            include: {
+                users: true,
+                pets: true,
+                admins: true,
+            },
+        });
+
+        if (!userApplications || userApplications === undefined || userApplications === null) {
+            return {
+                success: false,
+                message: 'No application found',
+            };
+        }
+        return {
+            success: true,
+            message: 'Successful query',
+            data: userApplications,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to query',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function queryUserAllPets(petId: number): Promise<ModelResponse<pets[]>> {
+    try {
+        const queryPets = await prisma.pets.findMany({
+            where: {
+                pet_id: petId,
+            },
+            include: {},
+        });
+
+        return {
+            success: true,
+            message: 'Failed to get all pets',
+            data: queryPets,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'An error occured',
+        };
+    }
+}
+
+export type AdoptedPetsProps = adopted_pets & {
+    pets: pets;
+    users: users;
+};
+
+export async function getUserAdoptedPets(userId: number): Promise<ModelResponse<AdoptedPetsProps[]>> {
+    try {
+        const userPets = await prisma.adopted_pets.findMany({
+            where: {
+                user_id: userId,
+            },
+            include: {
+                pets: true,
+                users: true,
+            },
+        });
+
+        if (!userPets) {
+            return {
+                success: false,
+                message: 'No pets found',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: userPets,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to get user adopted pets',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function getAllDogsCount(adminId: number): Promise<ModelResponse<number>> {
+    try {
+        const dogsCount = await prisma.pets.count({
+            where: {
+                admin_id: adminId,
+                pet_species: 'Dog',
+            },
+        });
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: dogsCount,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to query user data',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function getAllCatsCount(adminId: number): Promise<ModelResponse<number>> {
+    try {
+        const catsCount = await prisma.pets.count({
+            where: {
+                admin_id: adminId,
+                pet_species: 'Cat',
+            },
+        });
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: catsCount,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to query user data',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function getAllDogs(adminId: number): Promise<ModelResponse<pets[]>> {
+    try {
+        const dogsCount = await prisma.pets.findMany({
+            where: {
+                admin_id: adminId,
+                pet_species: 'Dog',
+            },
+        });
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: dogsCount,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to query user data',
+            error: 'Database error',
+        };
+    }
+}
+
+export async function getAllCats(adminId: number): Promise<ModelResponse<pets[]>> {
+    try {
+        const catsCount = await prisma.pets.findMany({
+            where: {
+                admin_id: adminId,
+                pet_species: 'Cat',
+            },
+        });
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: catsCount,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to query user data',
             error: 'Database error',
         };
     }

@@ -14,6 +14,7 @@ import { useState } from 'react';
 export default function AddPet() {
     const [weight, setWeight] = useState('');
     const [height, setHeight] = useState('');
+    const [age, setAge] = useState('');
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
     const mutation = useMutation({
@@ -34,6 +35,22 @@ export default function AddPet() {
             await mutation.mutateAsync(data);
         } catch (error) {
             console.error('An error occured: ', error);
+        }
+    };
+
+    const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        // Test if user input is number and only allow two decimal places
+        const numericRegex = /^\d*\.?\d{0,2}$/;
+
+        // if field length is less than or equal to zero set amount to empty
+        if (value.length <= 1) {
+            setAge('');
+        }
+
+        // Test if current field value match the regex if not then do not set
+        if (numericRegex.test(value)) {
+            setAge(value);
         }
     };
 
@@ -86,25 +103,32 @@ export default function AddPet() {
                 <Form className="grid gap-2" action={handleSubmit}>
                     <FormGroup className="grid grid-cols-3 gap-3">
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Pet name</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Pet name</FormLabel>
                             <Input id="name" name="name" type="text" placeholder="Pet name" required />
                         </FormGroup>
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Species</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Species</FormLabel>
                             <Input id="species" name="species" type="text" placeholder="Species" required />
                         </FormGroup>
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Pet image</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Pet image</FormLabel>
                             <Input id="image" name="image" type="file" accept="image/*" placeholder="Image" required />
                         </FormGroup>
                     </FormGroup>
                     <FormGroup className="grid grid-cols-2 gap-3">
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Age</FormLabel>
-                            <Input id="age" name="age" type="text" placeholder="Age" required />
+                            <FormLabel className="text-[0.8rem]">Age</FormLabel>
+                            <Input
+                                id="age"
+                                name="age"
+                                type="text"
+                                placeholder="Age"
+                                onChange={handleAgeChange}
+                                required
+                            />
                         </FormGroup>
                         <FormGroup className="grid gap-2 w-full">
-                            <FormLabel>Sex</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Sex</FormLabel>
                             <Select name="sex" required>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Sex" />
@@ -118,17 +142,17 @@ export default function AddPet() {
                     </FormGroup>
                     <FormGroup className="grid grid-cols-2 gap-2">
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Breed</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Breed</FormLabel>
                             <Input id="breed" name="breed" type="text" placeholder="Pet breed" required />
                         </FormGroup>
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Birthday</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Birthday (optional)</FormLabel>
                             <Input id="birthday" name="birthday" type="date" placeholder="Pet birthday (Optional)" />
                         </FormGroup>
                     </FormGroup>
                     <FormGroup className="grid grid-cols-2 gap-2">
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Weight(kg)</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Weight(kg)</FormLabel>
                             <Input
                                 id="weight"
                                 name="weight"
@@ -140,7 +164,7 @@ export default function AddPet() {
                             />
                         </FormGroup>
                         <FormGroup className="grid gap-2">
-                            <FormLabel>Height inches</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Height (inches)</FormLabel>
                             <Input
                                 id="height"
                                 name="height"
@@ -154,11 +178,11 @@ export default function AddPet() {
                     </FormGroup>
                     <FormGroup className="grid gap-2">
                         <FormGroup className="grid gap-2 w-full">
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Description</FormLabel>
                             <Textarea id="description" name="description" placeholder="Description" />
                         </FormGroup>
                         <FormGroup className="grid gap-2 w-full">
-                            <FormLabel>Conditions</FormLabel>
+                            <FormLabel className="text-[0.8rem]">Conditions</FormLabel>
                             <Textarea id="condition" name="condition" placeholder="Conditions (Optional)" />
                         </FormGroup>
                     </FormGroup>

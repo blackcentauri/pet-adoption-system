@@ -75,13 +75,7 @@ export function UserNavigation({
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <UserRoundPen />
-                                Edit Profile
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
+
                         <DropdownMenuItem
                             onClick={async () => {
                                 const session = await deleteCurrentSession();
