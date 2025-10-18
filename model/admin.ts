@@ -5,6 +5,36 @@ import { createAdoptedPet, updatePetStatus } from './pet';
 
 const prisma = new PrismaClient();
 
+export async function modelAdminInfo(adminId: number): Promise<ModelResponse<admins>> {
+    try {
+        const admin = await prisma.admins.findUnique({
+            where: {
+                admin_id: adminId,
+            },
+        });
+
+        if (!admin) {
+            return {
+                success: false,
+                message: 'No admin found',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful query',
+            data: admin,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+
+        return {
+            success: false,
+            message: 'Failed to fetch admin data',
+        };
+    }
+}
+
 export async function getOrganizationInfo(email: string): Promise<ModelResponse<admins>> {
     try {
         const organizationInfo = await prisma.admins.findUnique({
@@ -323,6 +353,78 @@ export async function getAllApprovedApplications(adminId: number): Promise<Model
         return {
             success: false,
             message: 'Failed to query pending applications count',
+            error: 'Database error',
+        };
+    }
+}
+
+// Query user info fromm database
+export async function queryAdminInfo(userId: number): Promise<ModelResponse<admins>> {
+    try {
+        const userInfo = await prisma.admins.findUnique({
+            where: {
+                admin_id: userId,
+            },
+        });
+
+        if (!userInfo || userInfo === undefined) {
+            return {
+                success: false,
+                message: 'User info does not exists',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful query!',
+            data: userInfo,
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+            message: 'An error occured while querying user email',
+            error: `${error}`,
+        };
+    }
+}
+
+type AdminInfo = {
+    adminId: number;
+    adminName: string;
+    username: string;
+    email: string;
+};
+
+export async function updateAdminInfo(data: AdminInfo): Promise<ModelResponse> {
+    try {
+        const user = await prisma.admins.update({
+            where: {
+                admin_id: data.adminId,
+            },
+            data: {
+                admin_name: data.adminName,
+                username: data.username,
+                email: data.email,
+            },
+        });
+
+        if (!user) {
+            return {
+                success: false,
+                message: 'Failed to update user data',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful update',
+        };
+    } catch (error) {
+        console.error('An error occured', error);
+        return {
+            success: false,
+            message: 'Failed to query',
             error: 'Database error',
         };
     }

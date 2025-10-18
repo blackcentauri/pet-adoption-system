@@ -1,13 +1,24 @@
 'use server';
-import { createAdoptedPet, createPet, getAllAvailablePets, getAllFosterPets } from '@/model/pet';
+import {
+    AdoptedPetsProps,
+    createAdoptedPet,
+    createPet,
+    getAllAvailablePets,
+    getAllCats,
+    getAllDogs,
+    getAllFosterPets,
+    getAllUserPetApplications,
+    getUserAdoptedPets,
+} from '@/model/pet';
 import { ActionResponse } from './response';
 import { getSession } from '@/lib/session';
-import { pet_status, pets } from '@/app/generated/prisma';
+import { applications, pet_status, pets } from '@/app/generated/prisma';
 import { CreatePetSchema, UpdatePetSchema } from '@/lib/pets';
 import { deletePet as removePet, updatePet as updateModelPet } from '@/model/pet';
 import { getCurrentAdmin } from './admin';
 import fs from 'fs';
 import path from 'path';
+import { ApplicationsProps } from '@/model/admin';
 
 export async function getFosterPets(): Promise<ActionResponse<pets[]>> {
     try {
@@ -98,13 +109,11 @@ export async function insertPet(formData: FormData): Promise<ActionResponse> {
         const bytes = await imageFile.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // choose upload dir (env override) or default to public/pets so Next can serve it
         const uploadDirectory = process.env.PET_UPLOAD_DIR
             ? path.resolve(process.env.PET_UPLOAD_DIR)
             : path.join(process.cwd(), 'public', 'pets');
         if (!fs.existsSync(uploadDirectory)) fs.mkdirSync(uploadDirectory, { recursive: true });
 
-        // safe unique filename
         const ext = path.extname(imageFile.name);
         const base = path
             .basename(imageFile.name, ext)
@@ -115,7 +124,6 @@ export async function insertPet(formData: FormData): Promise<ActionResponse> {
 
         fs.writeFileSync(filePath, buffer);
 
-        // use a public URL when saved inside public/
         const imageURL = uploadDirectory.includes(path.join('public')) ? `/pets/${filename}` : filePath;
 
         const pet = await createPet({
@@ -309,7 +317,7 @@ export async function updatePet(formData: FormData): Promise<ActionResponse> {
             pet_description: data.description,
             pet_condition: data.condition,
             pet_image: imageURL,
-            admin_id: adminId.data.userId,
+            admin_id: adminId.data.admin_id,
         };
 
         const pet = await updateModelPet(parseData);
@@ -331,6 +339,123 @@ export async function updatePet(formData: FormData): Promise<ActionResponse> {
         return {
             success: false,
             message: 'Failed to insert pet. An error occured',
+            error: 'Server error',
+        };
+    }
+}
+
+export async function fetchAllUserApplications(): Promise<ActionResponse<ApplicationsProps[]>> {
+    try {
+        const session = await getSession();
+
+        if (!session || session.userId === undefined || session.userId === null) {
+            return {
+                success: false,
+                message: 'No user found',
+                error: 'Unauthorized access',
+                data: [],
+            };
+        }
+
+        const applications = await getAllUserPetApplications(session.userId);
+
+        if (
+            !applications.success ||
+            applications.data === undefined ||
+            applications.data === null ||
+            !applications.data
+        ) {
+            return {
+                success: false,
+                message: 'Failed to fetch applications',
+                error: 'Database error',
+                data: [],
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Served successfully!',
+            data: applications.data,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to fetch applications',
+            error: 'Server error',
+            data: [],
+        };
+    }
+}
+
+export async function fetchAllUserAdoptedPets(): Promise<ActionResponse<AdoptedPetsProps[]>> {
+    try {
+        const session = await getSession();
+
+        if (!session || session.userId === undefined || session.userId === null) {
+            return {
+                success: false,
+                message: 'No user found',
+            };
+        }
+
+        const adoptedPets = await getUserAdoptedPets(session.userId);
+
+        if (!adoptedPets.success) {
+            return {
+                success: false,
+                message: 'Failed to query adopted pets',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful fetched!',
+            data: adoptedPets.data,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to fetched data',
+            error: 'Server error',
+        };
+    }
+}
+
+export async function fetchAllStatistics(): Promise<ActionResponse<pets[]>> {
+    try {
+        const session = await getSession();
+
+        if (!session || session.userId === undefined || session.userId === null) {
+            return {
+                success: false,
+                message: 'No user found',
+            };
+        }
+
+        const dogs = await getAllDogs(session.userId);
+        const cats = await getAllCats(session.userId);
+
+        if (!dogs.success || !cats.success) {
+            return {
+                success: false,
+                message: 'Failed to fetch pets',
+            };
+        }
+
+        const allPets = [...(dogs.data ?? []), ...(cats.data ?? [])];
+        return {
+            success: true,
+            message: 'Successful fetched!',
+            data: allPets,
+        };
+    } catch (error) {
+        console.error('An error occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to fetched data',
             error: 'Server error',
         };
     }

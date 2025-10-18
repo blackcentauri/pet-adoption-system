@@ -7,9 +7,13 @@ import {
     getAllApplicationsCount,
     getAllApprovedApplications,
     getAllRejectedApplicationsCount,
+    modelAdminInfo,
+    queryAdminInfo,
+    updateAdminInfo,
     updateApplicationStatus,
 } from '@/model/admin';
-import { logOutSession } from '@/lib/auth';
+import { logOutSession, UpdateAdminSchema } from '@/lib/auth';
+import { admins } from '@/app/generated/prisma';
 
 export async function getAllFosterRequests(): Promise<ActionResponse<ApplicationsProps[]>> {
     try {
@@ -93,11 +97,11 @@ export async function updateApplication(applicationId: number, applicationStatus
     }
 }
 
-export async function getCurrentAdmin(): Promise<ActionResponse<JWTPayload>> {
+export async function getCurrentAdmin(): Promise<ActionResponse<admins>> {
     try {
         const userInfo = await getSession();
 
-        if (!userInfo || userInfo.username === null || userInfo.username === undefined) {
+        if (!userInfo || userInfo.userId === null || userInfo.userId === undefined) {
             return {
                 success: false,
                 message: 'No user found!',
@@ -106,10 +110,18 @@ export async function getCurrentAdmin(): Promise<ActionResponse<JWTPayload>> {
             };
         }
 
+        const admin = await modelAdminInfo(userInfo.userId);
+
+        if (!admin.success) {
+            return {
+                success: false,
+                message: 'Failed to query data',
+            };
+        }
         return {
             success: true,
             message: 'Fetch current user successfully!',
-            data: userInfo,
+            data: admin.data,
         };
     } catch (error) {
         console.error('An error occured: ', error);
@@ -224,6 +236,94 @@ export async function fetchAllApplicationsCount(): Promise<ActionResponse<Applic
             message: 'Failed to fetch applications count',
             error: 'Server error',
             data: fallbackData,
+        };
+    }
+}
+
+export async function fetchAdminInfo(): Promise<ActionResponse<admins>> {
+    try {
+        const session = await getSession();
+
+        if (!session || session.userId === null || session.userId === undefined) {
+            return {
+                success: false,
+                message: 'No user found',
+                error: 'Unauthorized access',
+            };
+        }
+
+        const userInfo = await queryAdminInfo(session.userId);
+
+        if (!userInfo.success) {
+            return {
+                success: false,
+                message: 'Failed to fetch user info',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful',
+            data: userInfo.data,
+        };
+    } catch (error) {
+        console.error('An erro occured: ', error);
+        return {
+            success: false,
+            message: 'Failed to fetch user data',
+        };
+    }
+}
+
+export async function updateAdmin(formData: FormData): Promise<ActionResponse> {
+    try {
+        const userId = await getSession();
+
+        if (!userId || userId.userId == null || userId.userId === undefined) {
+            return {
+                success: false,
+                message: 'No user found',
+            };
+        }
+
+        const data = {
+            adminName: formData.get('adminName') as string,
+            username: formData.get('username') as string,
+            email: formData.get('email') as string,
+        };
+
+        const Validation = UpdateAdminSchema.safeParse(data);
+
+        if (!Validation.success) {
+            return {
+                success: false,
+                message: 'Failed to update user',
+            };
+        }
+
+        const user = await updateAdminInfo({
+            adminId: userId.userId,
+            adminName: data.adminName,
+            username: data.username,
+            email: data.email,
+        });
+        if (!user.success) {
+            return {
+                success: false,
+                message: 'Failed to update user',
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Successful update',
+        };
+    } catch (error) {
+        console.error('Error', error);
+        return {
+            success: false,
+            message: 'Failed to update',
+            error: 'Server error',
         };
     }
 }

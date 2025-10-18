@@ -1,26 +1,26 @@
 import { pets } from '@/app/generated/prisma';
-import UpdatePet from './UpdatePet';
-import { deletePet } from '@/server/pets';
 import { Button } from './ui/button';
-import { useContext, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
-import { PetContext } from '@/app/dashboard/admin/pets/page';
+
 import { DialogTrigger } from '@radix-ui/react-dialog';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
+import { createUserApplication, getUserValidID } from '@/server/user';
+import { useRouter } from 'next/navigation';
 
-export default function AdminViewPets(data: pets) {
-    const ctx = useContext(PetContext);
+export default function UserViewPets(petss: pets) {
+    const router = useRouter();
 
-    if (!ctx || ctx === null) {
-        throw new Error('Pet context is not provided ');
-    }
-    const { pets, setPets } = ctx;
     const [open, setOpen] = useState(false);
-
     const [pending, startTransition] = useTransition();
+    const { data } = useQuery({
+        queryKey: ['user-valid-id'],
+        queryFn: () => getUserValidID().then((response) => response.success),
+    });
 
-    const birthdayDisplay = data.pet_birthday ? new Date(data.pet_birthday).toLocaleDateString() : 'N/A';
+    const birthdayDisplay = petss.pet_birthday ? new Date(petss.pet_birthday).toLocaleDateString() : 'N/A';
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="bg-[#FED200] hover:bg-[#e3ba00] text-white font-semibold my-4 px-15 py-2 rounded-full shadow-md transition-all">
@@ -28,35 +28,41 @@ export default function AdminViewPets(data: pets) {
             </DialogTrigger>
             <DialogContent>
                 <div className="grid grid-cols-2">
-                    <Image src={data.pet_image} alt={data.pet_name} width={160} height={160} className="rounded-2xl" />
+                    <Image
+                        src={petss.pet_image}
+                        alt={petss.pet_name}
+                        width={160}
+                        height={160}
+                        className="rounded-2xl"
+                    />
                     <DialogHeader className="grid gap-3">
                         <div>
                             <DialogTitle className="text-center text-2xl text-[#FED200] hover:text-black font-semibold">
-                                {data.pet_name}
+                                {petss.pet_name}
                             </DialogTitle>
-                            <DialogDescription className="text-center">{data.pet_species}</DialogDescription>
+                            <DialogDescription className="text-center">{petss.pet_species}</DialogDescription>
                         </div>
                         <section className="grid grid-cols-2 gap-1 justify-start">
                             <DialogDescription className="text-[0.8rem]">
-                                <span className="font-semibold">Age: </span> {data.pet_age}
+                                <span className="font-semibold">Age: </span> {petss.pet_age}
                             </DialogDescription>
                             <DialogDescription className="text-[0.8rem]">
-                                <span className="font-semibold">Breed: </span> {data.pet_breed}
+                                <span className="font-semibold">Breed: </span> {petss.pet_breed}
                             </DialogDescription>
                         </section>
                         <section className="grid grid-cols-2 gap-1 justify-start">
                             <DialogDescription className="text-[0.8rem]">
                                 <span className="font-semibold">Weight: </span>
-                                {data.pet_weight}
+                                {petss.pet_weight}
                             </DialogDescription>
                             <DialogDescription className="text-[0.8rem]">
                                 <span className="font-semibold">Height: </span>
-                                {data.pet_height}
+                                {petss.pet_height}
                             </DialogDescription>
                         </section>
                         <DialogDescription className="text-[0.8rem]">
                             <span className="font-semibold">Status: </span>{' '}
-                            {data.pet_status === 'not_adopted' ? 'Not Adopted' : 'Adopted'}
+                            {petss.pet_status === 'not_adopted' ? 'Not Adopted' : 'Adopted'}
                         </DialogDescription>
                         <DialogDescription className="text-[0.8rem]">
                             <span className="font-semibold">Birthday: </span>
@@ -66,30 +72,42 @@ export default function AdminViewPets(data: pets) {
                 </div>
                 <DialogDescription className="grid gap-2">
                     <span className="font-semibold block">Description: </span>
-                    {data.pet_description}
+                    {petss.pet_description}
                 </DialogDescription>
                 <DialogDescription className="grid gap-2">
                     <span className="font-semibold block">Conditions: </span>
-                    {data.pet_condition}
+                    {petss.pet_condition}
                 </DialogDescription>
                 <DialogFooter className="grid grid-cols-2 gap-15">
-                    <UpdatePet {...data} />
                     <Button
+                        className="bg-[#FED200] hover:bg-[#e3ba00] text-white font-semibold my-4 px-15 py-2 rounded-full shadow-md transition-all"
                         variant={'outline'}
                         onClick={() => {
-                            startTransition(async () => {
-                                const removePet = await deletePet(data.pet_id);
-
-                                if (removePet.success) {
-                                    toast('Pet deleted successfully!');
-                                }
-
-                                setPets(pets.filter((removePet) => removePet.pet_id !== data.pet_id));
-                                setOpen(false);
-                            });
+                            if (data === true) {
+                                startTransition(() => {
+                                    (async () => {
+                                        const application = await createUserApplication(petss);
+                                        if (application.success) {
+                                            toast('Thank you for applying! We will update you soon.');
+                                            setOpen(false);
+                                        } else {
+                                            toast.warning('Failed to submit application.');
+                                        }
+                                    })();
+                                });
+                            } else {
+                                toast.info('Please upload a valid ID first', {
+                                    description:
+                                        'Go to profile -> then upload your valid ID and the organization will check your application.',
+                                    action: {
+                                        label: 'Upload validID',
+                                        onClick: () => router.push('/dashboard/user/profile'),
+                                    },
+                                });
+                            }
                         }}
                     >
-                        Delete
+                        Adopt
                     </Button>
                 </DialogFooter>
             </DialogContent>

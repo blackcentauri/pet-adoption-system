@@ -11,7 +11,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from './ui/sidebar';
-import { Home, PawPrint, UsersRound, MessageSquareText } from 'lucide-react';
+import { Home, PawPrint, UsersRound } from 'lucide-react';
 import { UserNavigation } from './Nav-User';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
@@ -35,14 +35,6 @@ const adminRoutes = [
     },
 ];
 
-const otherRoutes = [
-    {
-        title: 'Foster update',
-        url: '/dashboard/admin/foster-update',
-        icon: MessageSquareText,
-    },
-];
-
 export default function LeftSidebar() {
     const { data } = useQuery({
         queryKey: ['admin-info'],
@@ -51,8 +43,8 @@ export default function LeftSidebar() {
 
     const user = {
         name: data?.username ? data.username : '',
-        email: 'sample@email.com',
-        avatar: '/favicon.png',
+        email: data?.email ? data.email : '',
+        avatar: '/images/admin_avatar.png',
     };
     return (
         <Sidebar>
@@ -65,21 +57,6 @@ export default function LeftSidebar() {
                     <SidebarGroupLabel>Main </SidebarGroupLabel>
                     <SidebarMenu>
                         {adminRoutes.map((route) => (
-                            <SidebarMenuItem key={route.title}>
-                                <SidebarMenuButton asChild>
-                                    <Link href={route.url}>
-                                        <route.icon />
-                                        <span>{route.title}</span>
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                </SidebarGroup>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Others</SidebarGroupLabel>
-                    <SidebarMenu>
-                        {otherRoutes.map((route) => (
                             <SidebarMenuItem key={route.title}>
                                 <SidebarMenuButton asChild>
                                     <Link href={route.url}>
